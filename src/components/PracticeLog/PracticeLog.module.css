@@ -1,0 +1,18 @@
+.practiceLogContainer {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.practiceLogContainer ul {
+  list-style: none;
+  padding: 0;
+}
+
+.practiceLogContainer li {
+  background-color: #f9f9f9;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #eee;
+}

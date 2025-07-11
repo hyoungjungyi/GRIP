@@ -4,7 +4,7 @@ import Navbar from "./components/Navbar/Navbar";
 import Tuner from "./pages/Tuner/Tuner";
 import SheetList from "./pages/SheetList/SheetList";
 import MyPage from "./pages/MyPage";
-import Metronum from "./pages/Metronum/Metronum";
+import MetronomePractice from "./pages/Metronome/MetronomePractice";
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
           <Route path="/tuner" element={<Tuner />} />
           <Route path="/sheetList" element={<SheetList />} />
           <Route path="/mypage" element={<MyPage />} />
-          <Route path="/metronum" element={<Metronum />} />
+          <Route path="/metronome-practice" element={<MetronomePractice />} />
         </Routes>
       </div>
     </Router>

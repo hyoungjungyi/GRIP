@@ -13,7 +13,7 @@ export default function Nav_Met() {
       }}
     >
       <button onClick={() => navigate("/tuner")}>Tuner</button>
-      <button onClick={() => navigate("/metronum")}>Metronome</button>
+      <button onClick={() => navigate("/metronome-practice")}>Metronome</button>
     </div>
   );
 }
