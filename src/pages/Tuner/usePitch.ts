@@ -71,9 +71,13 @@ export function usePitch() {
           audioContext.sampleRate
         );
         if (detectedPitch && detectedPitch >= 50 && detectedPitch <= 1000) {
-          setPitch(detectedPitch);
+          // Add a very tiny random noise to force re-render even when pitch stays the same
+          const jitteredPitch = detectedPitch + Math.random() * 0.00001;
+          setPitch(jitteredPitch);
         } else {
-          setPitch(null);
+          const placeholderPitch = 0;
+          const jitterPlaceholder = placeholderPitch + Math.random() * 0.00001;
+          setPitch(jitterPlaceholder);
         }
         requestAnimationFrame(update);
       };

@@ -37,3 +37,28 @@ export function getNoteFromFrequency(frequency: number) {
     octave: Math.floor(roundedNote / 12) - 1,
   };
 }
+
+export function getClosestString(frequency: number): string | null {
+  const stringFrequencies = {
+    E: 82.41, // E2
+    A: 110.0, // A2
+    D: 146.83, // D3
+    G: 196.0, // G3
+    B: 246.94, // B3
+    e: 329.63, // E4
+  };
+
+  const threshold = 10; // Hz
+  let closestString: string | null = null;
+  let minDifference = Infinity;
+
+  for (const [stringName, stringFreq] of Object.entries(stringFrequencies)) {
+    const difference = Math.abs(frequency - stringFreq);
+    if (difference < minDifference) {
+      minDifference = difference;
+      closestString = stringName;
+    }
+  }
+
+  return minDifference <= threshold ? closestString : null;
+}
