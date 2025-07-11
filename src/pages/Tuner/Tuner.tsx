@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import PitchVisualizer from "./PitchVisualizer";
 import "./Tuner.css";
+import Nav_Met from "../../components/Nav_Met/Nav_Met";
 
 import guitarHead from "../../assets/guitar_head.png";
 import guitarHead_E2 from "../../assets/guitar_head_E2.png";
@@ -56,6 +57,7 @@ const Tuner: React.FC = () => {
           />
         </div>
       </div>
+      <Nav_Met />
     </>
   );
 };

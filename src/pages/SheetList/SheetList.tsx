@@ -1,5 +1,5 @@
 import React from "react";
-import Navbar from "../components/Navbar/Navbar";
+import Navbar from "../../components/Navbar/Navbar";
 
 const SheetList: React.FC = () => {
   const sheets = [
