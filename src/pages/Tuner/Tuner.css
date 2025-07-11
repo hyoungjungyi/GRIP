@@ -1,0 +1,76 @@
+/* src/pages/Tuner.css */
+
+.tuner-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding-top: 80px;
+  height: calc(100vh - 80px); /* 상단바 제외한 전체 높이 */
+  box-sizing: border-box;
+}
+
+.pitch-visualizer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.center-line {
+  width: 2px;
+  height: 150px;
+  background-color: white;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.indicator {
+  position: relative;
+  top: 60px;
+  font-size: 24px;
+  color: red;
+  animation: wiggle 2s ease-in-out infinite;
+}
+
+@keyframes wiggle {
+  0% {
+    transform: translateX(-10px);
+  }
+  50% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(10px);
+  }
+}
+
+.guitar-area {
+  flex: 2;
+  display: flex;
+  justify-content: center;
+}
+
+.guitar-image {
+  max-height: 400px;
+  width: auto;
+}
+
+.string-labels {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.string-button {
+  background: #333;
+  color: white;
+  border: 1px solid #888;
+  border-radius: 20px;
+  padding: 10px 16px;
+  font-size: 16px;
+  cursor: pointer;
+}

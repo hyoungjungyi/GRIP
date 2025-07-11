@@ -1,2 +1,3 @@
 # GRIP
-Guitar Routine Improvement Planner 
+
+Guitar Routine Improvement Planner
