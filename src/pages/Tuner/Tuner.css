@@ -2,19 +2,20 @@
 
 .tuner-container {
   display: flex;
-  justify-content: space-around;
-  align-items: center;
+  flex-direction: column; /* Arrange items vertically */
+  align-items: center; /* Center horizontally */
+  justify-content: center; /* Center vertically */
+  height: 100vh;
+  width: 100%;
   padding-top: 80px;
-  height: calc(100vh - 80px); /* 상단바 제외한 전체 높이 */
   box-sizing: border-box;
 }
 
 .pitch-visualizer {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 800px;
+  max-height: 600px;
 }
 
 .center-line {
@@ -46,23 +47,37 @@
   }
 }
 
+.tuner-body {
+  flex: 9; /* Increase flex value to take more space */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%; /* Make it take full height */
+}
+
 .guitar-area {
-  flex: 2;
+  position: relative;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .guitar-image {
   max-height: 400px;
   width: auto;
+  transform: rotate(-90deg);
 }
 
 .string-labels {
-  flex: 1;
+  position: absolute;
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 12px;
+  /* Adjust these values to position the labels correctly */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .string-button {
