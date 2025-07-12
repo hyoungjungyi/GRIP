@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import axios from "axios";
-import "./LoginModal.css"
+import "./LoginModal.css";
 
 type LoginModalProps = {
   isOpen: boolean;
@@ -14,6 +14,7 @@ declare global {
 }
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const googleDivRef = useRef<HTMLDivElement>(null);
+  const baseURL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -22,11 +23,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
       if (!window.google || !googleDivRef.current) return;
 
       window.google.accounts.id.initialize({
-        client_id: "752175459323-dvph1oe4dn8ljikgomme8c01ucfhptn2.apps.googleusercontent.com",
+        client_id:
+          "752175459323-dvph1oe4dn8ljikgomme8c01ucfhptn2.apps.googleusercontent.com",
         callback: async (response: any) => {
           const googleToken = response.credential;
           try {
-            const res = await axios.post("http://localhost:5500/api/auth/google", { token: googleToken });
+            const res = await axios.post(`${baseURL}/api/auth/google`, {
+              token: googleToken,
+            });
             console.log("로그인 성공 응답 데이터:", res.data);
             const jwt = res.data.jwt;
 
@@ -62,7 +66,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <button className="close-button" onClick={onClose}>X</button>
+        <button className="close-button" onClick={onClose}>
+          X
+        </button>
         <h2>Login</h2>
         <div ref={googleDivRef}></div>
       </div>

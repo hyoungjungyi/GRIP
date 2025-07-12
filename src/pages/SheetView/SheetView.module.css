@@ -1,0 +1,103 @@
+/* SheetView.module.css */
+.container {
+  padding: 32px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+.inputRow {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.input {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+.button {
+  padding: 10px 24px;
+  font-size: 16px;
+  border-radius: 6px;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+.listSection {
+  margin-bottom: 28px;
+}
+.listTitle {
+  font-size: 1.3em;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.albumRow {
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-bottom: 8px;
+}
+.albumCard {
+  display: inline-block;
+  width: 140px;
+  margin-right: 16px;
+  vertical-align: top;
+}
+.albumImg {
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px #ccc;
+}
+.albumTitle {
+  margin-top: 8px;
+  font-weight: bold;
+}
+.albumArtist {
+  color: #888;
+  font-size: 14px;
+}
+.albumProgress {
+  font-size: 13px;
+}
+.albumGenre {
+  font-size: 13px;
+}
+.albumDate {
+  color: #888;
+  font-size: 13px;
+}
+.failedMsg {
+  margin-top: 8px;
+  color: #d32f2f;
+  font-weight: bold;
+  text-align: center;
+}
+.topContainer {
+  margin-bottom: 24px;
+  width: 50vw;
+}
+.bottomContainer {
+  height: 420px; /* 원하는 높이로 조절 가능 */
+  overflow-y: auto;
+  background: #fafbfc;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px #eee;
+  padding: 16px 0;
+  width: 1600px; /* 좌우 사이즈 2배로 넓힘 */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.topDescription {
+  margin-bottom: 8px;
+  text-align: left;
+}
+.topDescriptionText {
+  font-weight: bold;
+  font-size: 18px;
+}
