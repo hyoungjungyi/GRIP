@@ -16,7 +16,7 @@ const Timer: React.FC = () => {
           if (prev <= 1) {
             clearInterval(intervalRef.current!);
             setIsRunning(false);
-            alert("타이머 종료!");
+            alert("Timer finished!");
             return 0;
           }
           return prev - 1;
@@ -103,19 +103,17 @@ const Timer: React.FC = () => {
         {/* 중심 원 */}
         <circle cx={70} cy={70} r={7} fill="#1976d2" />
         {/* 분/초 텍스트 (클릭 시 시간 설정) */}
-        <text
-          x="50%"
-          y="90%"
-          textAnchor="middle"
-          fontSize="18"
-          fill="#333"
-          dominantBaseline="middle"
-          style={{ cursor: isRunning ? "default" : "pointer" }}
+        <div
+          style={{
+            marginTop: 12,
+            fontWeight: 600,
+            fontSize: 18,
+            cursor: !isRunning ? "pointer" : "default",
+          }}
           onClick={handleTimeClick}
         >
-          {Math.floor(seconds / 60)}:
-          {(seconds % 60).toString().padStart(2, "0")}
-        </text>
+          {Math.floor(seconds / 60)} min {seconds % 60} sec
+        </div>
       </svg>
       <div className={styles.buttonRow}>
         <button
@@ -123,54 +121,72 @@ const Timer: React.FC = () => {
           onClick={startTimer}
           disabled={isRunning || seconds === 0}
         >
-          시작
+          Start
         </button>
         <button
           className={styles.timerBtn}
           onClick={stopTimer}
           disabled={!isRunning}
         >
-          정지
+          Stop
         </button>
         <button className={styles.timerBtn} onClick={resetTimer}>
-          초기화
+          Reset
         </button>
       </div>
       {setting && (
         <div className={styles.settingOverlay}>
-          <form className={styles.settingBox} onSubmit={handleSetTime}>
-            <div className={styles.settingHeader}>목표 시간 설정</div>
-            <div className={styles.settingInputs}>
-              <input
-                name="minutes"
-                type="number"
-                min={0}
-                max={99}
-                defaultValue={Math.floor(targetSeconds / 60)}
-              />{" "}
-              분
-              <input
-                name="seconds"
-                type="number"
-                min={0}
-                max={59}
-                defaultValue={targetSeconds % 60}
-              />{" "}
-              초
-            </div>
-            <div className={styles.settingButtons}>
-              <button type="submit" className={styles.timerBtn}>
-                확인
-              </button>
-              <button
-                type="button"
-                className={styles.timerBtn}
-                onClick={() => setSetting(false)}
+          <div className={styles.settingBox}>
+            <form onSubmit={handleSetTime}>
+              <div style={{ marginBottom: 12, fontWeight: 600 }}>
+                Set Target Time
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  gap: 8,
+                  alignItems: "center",
+                }}
               >
-                취소
-              </button>
-            </div>
-          </form>
+                <input
+                  type="number"
+                  name="minutes"
+                  min={0}
+                  max={59}
+                  defaultValue={Math.floor(targetSeconds / 60)}
+                  style={{ width: 50 }}
+                />
+                <span>min</span>
+                <input
+                  type="number"
+                  name="seconds"
+                  min={0}
+                  max={59}
+                  defaultValue={targetSeconds % 60}
+                  style={{ width: 50 }}
+                />
+                <span>sec</span>
+              </div>
+              <div
+                style={{
+                  marginTop: 18,
+                  display: "flex",
+                  gap: 12,
+                }}
+              >
+                <button type="submit" className={styles.timerBtn}>
+                  Set
+                </button>
+                <button
+                  type="button"
+                  className={styles.timerBtn}
+                  onClick={() => setSetting(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

@@ -19,8 +19,8 @@ const UploadBox: React.FC = () => {
 
   const handleUpload = () => {
     if (!selectedFile) return;
-    // TODO: 서버로 파일 업로드 처리
-    alert(`파일 업로드: ${selectedFile.name}`);
+    // TODO: Upload file to server
+    alert(`File uploaded: ${selectedFile.name}`);
     setShowPopup(false);
     setSelectedFile(null);
   };
@@ -75,9 +75,9 @@ const UploadBox: React.FC = () => {
           </svg>
         </div>
         <div className={styles.uploadText}>
-          <span className={styles.uploadTitle}>파일 업로드</span>
+          <span className={styles.uploadTitle}>Upload File</span>
           <span className={styles.uploadDesc}>
-            여기를 클릭하거나 <b>드래그</b>하여 영상/음원 파일을 업로드하세요
+            Click here or <b>drag</b> to upload a video/audio file
           </span>
         </div>
       </div>
@@ -85,7 +85,7 @@ const UploadBox: React.FC = () => {
         <div className={styles.popupOverlay}>
           <div className={styles.popupBox}>
             <div className={styles.popupHeader}>
-              <span>파일 업로드</span>
+              <span>Upload File</span>
               <button className={styles.popupClose} onClick={handleClose}>
                 X
               </button>
@@ -94,24 +94,24 @@ const UploadBox: React.FC = () => {
               type="file"
               accept="video/*,audio/*"
               ref={inputRef}
+              style={{ margin: "18px 0" }}
               onChange={handleFileChange}
-              className={styles.fileInput}
             />
             {selectedFile && (
-              <div className={styles.fileInfo}>
-                선택된 파일: {selectedFile.name}
+              <div style={{ marginBottom: 8 }}>
+                Selected: {selectedFile.name}
               </div>
             )}
-            <div className={styles.buttonRow}>
+            <div style={{ display: "flex", gap: 12 }}>
               <button
                 className={styles.uploadBtn}
                 onClick={handleUpload}
                 disabled={!selectedFile}
               >
-                업로드
+                Upload
               </button>
               <button className={styles.uploadBtn} onClick={handleClose}>
-                취소
+                Cancel
               </button>
             </div>
           </div>
