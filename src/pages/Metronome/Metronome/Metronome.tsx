@@ -9,7 +9,7 @@ const Metronome: React.FC = () => {
   const intervalRef = useRef<number | null>(null);
 
   useEffect(() => {
-    audioRef.current = new Audio("/metronome-sound.mp3"); // You'll need to provide a sound file
+    audioRef.current = new Audio("/audios/metronome-85688.mp3"); // public 폴더 기준 경로
   }, []);
 
   useEffect(() => {

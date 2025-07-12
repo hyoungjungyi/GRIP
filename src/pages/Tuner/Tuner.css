@@ -1,11 +1,26 @@
 /* src/pages/Tuner.css */
 
+/* Tuner 페이지 - 세련되고 통일된 UI 스타일 개선 */
+:root {
+  --main-color: #1976d2;
+  --accent-color: #ff7043;
+  --bg-color: #f5f7fa;
+  --card-bg: #fff;
+  --border-radius: 10px;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --font-family: "Inter", "Noto Sans KR", Arial, sans-serif;
+}
+
 .tuner-container {
   display: flex;
   height: 100vh;
   width: 100%;
-  padding-top: 80px;
   box-sizing: border-box;
+  background: var(--bg-color);
+  font-family: var(--font-family);
+  align-items: center; /* 상하 중앙 정렬 */
+  justify-content: center;
+  padding-top: 80px; /* 기존 유지, 필요시 조정 */
 }
 
 .pitch-visualizer-container {
@@ -13,6 +28,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  margin: 24px;
+  min-width: 320px;
+  max-width: 600px;
+  min-height: 320px;
+  max-height: 400px;
+  overflow: hidden;
 }
 
 .guitar-container {
@@ -21,11 +45,18 @@
   align-items: center;
   justify-content: center;
   position: relative;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  margin: 24px 0;
 }
 
-.guitar-head-image {
-  height: 80%;
+.guitar-head-image,
+.guitar-image {
+  max-height: 320px;
+  width: auto;
   transform: rotate(-90deg);
+  filter: drop-shadow(0 2px 8px rgba(25, 118, 210, 0.08));
 }
 
 .indicator-container {
@@ -38,36 +69,126 @@
 }
 
 .indicator {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background-color: #ccc;
+  background-color: #e3e8ee;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  color: #fff;
-  transition: background-color 0.2s;
+  font-weight: 600;
+  color: var(--main-color);
+  font-size: 16px;
+  margin-bottom: 8px;
+  transition: background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s;
+  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.08);
+  border: 2px solid transparent;
 }
 
 .indicator.active {
-  background-color: #ff4500; /* OrangeRed */
+  background-color: var(--accent-color);
+  color: #fff;
+  border: 2px solid var(--main-color);
+  box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.12);
+  z-index: 1;
 }
 
 .pitch-visualizer {
   width: 100%;
   height: 100%;
-  max-width: 800px;
-  max-height: 600px;
+  max-width: 100%;
+  max-height: 100%;
+  background: var(--bg-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  overflow: hidden;
 }
 
 .center-line {
   width: 2px;
   height: 150px;
-  background-color: white;
+  background-color: var(--main-color);
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+}
+
+.tuner-body {
+  flex: 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.guitar-area {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.string-labels {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.string-button {
+  background: var(--main-color);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.08);
+  transition: background 0.2s;
+}
+
+.string-button:hover {
+  background: var(--accent-color);
+}
+
+/* 헤드 이미지 오른쪽 인디케이터 선택 시 시각적으로 강조 */
+.indicator {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #e3e8ee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: var(--main-color);
+  font-size: 16px;
+  margin-bottom: 8px;
+  transition: background-color 0.2s, color 0.2s, box-shadow 0.2s, border 0.2s;
+  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.08);
+  border: 2px solid transparent;
+}
+
+.indicator.active {
+  background-color: var(--accent-color);
+  color: #fff;
+  border: 2px solid var(--main-color);
+  box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.12);
+  z-index: 1;
+}
+
+/* 헤드 이미지에서 선택된 줄(스트링)도 시각적으로 강조 */
+.guitar-head-image.selected,
+.guitar-image.selected {
+  filter: drop-shadow(0 0 8px var(--accent-color));
+  border: 2px solid var(--accent-color);
+  background: rgba(255, 112, 67, 0.08);
 }
 
 .indicator {
@@ -90,45 +211,20 @@
   }
 }
 
-.tuner-body {
-  flex: 9; /* Increase flex value to take more space */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%; /* Make it take full height */
-}
-
-.guitar-area {
+.tuner-display {
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.guitar-image {
-  max-height: 400px;
-  width: auto;
-  transform: rotate(-90deg);
-}
-
-.string-labels {
+.grid-background {
   position: absolute;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  /* Adjust these values to position the labels correctly */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.string-button {
-  background: #333;
-  color: white;
-  border: 1px solid #888;
-  border-radius: 20px;
-  padding: 10px 16px;
-  font-size: 16px;
-  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(to right, #ddd 1px, transparent 1px),
+    linear-gradient(to bottom, #ddd 1px, transparent 1px);
+  background-size: 10px 10px;
 }

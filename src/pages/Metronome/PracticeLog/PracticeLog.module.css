@@ -1,19 +1,94 @@
+/* 전체적으로 통일된 UI 스타일 개선 */
+:root {
+  --main-color: #1976d2;
+  --accent-color: #ff7043;
+  --bg-color: #f5f7fa;
+  --card-bg: #fff;
+  --border-radius: 10px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --font-family: 'Inter', 'Noto Sans KR', Arial, sans-serif;
+}
+
 .practiceLogContainer {
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  border: none;
+  border-radius: var(--border-radius);
+  max-height: 320px;
+  overflow-y: auto;
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+  font-family: var(--font-family);
 }
 
 .practiceLogContainer ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .practiceLogContainer li {
-  background-color: #f9f9f9;
-  margin-bottom: 10px;
-  padding: 10px;
+  background-color: var(--bg-color);
+  margin-bottom: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #e3e8ee;
+  color: #222;
+  font-size: 13px;
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  transition: box-shadow 0.2s;
+}
+
+.practiceLogContainer li:hover {
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+  background: #eaf2fb;
+}
+
+.practiceLogContainer li button {
+  font-size: 12px;
+  padding: 2px 8px;
+  min-width: 28px;
+  height: 22px;
   border-radius: 4px;
-  border: 1px solid #eee;
-  color: #000;
+  border: none;
+  background: var(--main-color);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.practiceLogContainer li button[aria-label="Delete log"] {
+  background: var(--accent-color);
+}
+
+.practiceLogContainer li button:hover {
+  filter: brightness(0.95);
+}
+
+.practiceLogContainer li span {
+  font-size: 12px;
+  margin: 0 8px;
+}
+
+.practiceLogHeader {
+  position: sticky;
+  top: 0;
+  background: var(--card-bg);
+  z-index: 2;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e3e8ee;
+}
+
+.practiceLogHeader h2 {
+  font-size: 18px;
+  color: var(--main-color);
+  margin: 0 0 4px 0;
+  font-weight: 700;
+}
+
+.practiceLogHeader div {
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
 }

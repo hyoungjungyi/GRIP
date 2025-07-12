@@ -3,23 +3,58 @@ import styles from "./ChromaticPractice.module.css";
 
 interface ChromaticPracticeProps {
   addLog: (pattern: string, bpm: number) => void;
+  isTracking: boolean;
+  onTracking: () => void;
+  practiceDuration: number;
+  pattern: string;
+  setPattern: React.Dispatch<React.SetStateAction<string>>;
+  maxBpm: number;
+  setMaxBpm: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const ChromaticPractice: React.FC<ChromaticPracticeProps> = ({ addLog }) => {
-  const [pattern, setPattern] = useState("");
-  const [maxBpm, setMaxBpm] = useState(0);
+const ChromaticPractice: React.FC<ChromaticPracticeProps> = ({
+  addLog,
+  isTracking,
+  onTracking,
+  practiceDuration,
+  pattern,
+  setPattern,
+  maxBpm,
+  setMaxBpm,
+}) => {
+  const [wasPaused, setWasPaused] = useState(false);
+
+  // 버튼 텍스트 결정
+  let buttonText = "Start Chromatic Practice";
+  if (isTracking) buttonText = "Pause";
+  else if (wasPaused) buttonText = "Resume";
+
+  const handleTracking = () => {
+    setWasPaused(isTracking); // Pause 상태 기록
+    onTracking();
+  };
 
   const handleRecord = () => {
     if (pattern && maxBpm > 0) {
       addLog(pattern, maxBpm);
       setPattern("");
       setMaxBpm(0);
+      setWasPaused(false); // 기록 후 버튼 텍스트 초기화
+      if (isTracking) onTracking(); // 시간 추적 멈춤
     }
   };
 
   return (
     <div className={styles.chromaticPracticeContainer}>
-      <button>Start Chromatic Practice</button>
+      <button
+        onClick={handleTracking}
+        style={{ width: "100%", minWidth: "200px" }}
+      >
+        {buttonText}
+      </button>
+      <div style={{ margin: "8px 0", fontSize: "14px" }}>
+        연습 시간: {practiceDuration}초
+      </div>
       <div className={styles.inputGroup}>
         <label htmlFor="pattern">Pattern:</label>
         <input
@@ -46,7 +81,12 @@ const ChromaticPractice: React.FC<ChromaticPracticeProps> = ({ addLog }) => {
           }}
         />
       </div>
-      <button onClick={handleRecord}>Record</button>
+      <button
+        onClick={handleRecord}
+        style={{ width: "100%", minWidth: "200px" }}
+      >
+        Record
+      </button>
     </div>
   );
 };
