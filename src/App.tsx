@@ -6,9 +6,10 @@ import MyPage from "./pages/MyPage/MyPage";
 import MetronomePractice from "./pages/Metronome/MetronomePractice";
 import SheetView from "./pages/SheetView/SheetView";
 
+
 function App() {
   return (
-    <Router>
+
       <div className="app-container">
         <Navbar />
         <Routes>
@@ -18,7 +19,6 @@ function App() {
           <Route path="/metronome-practice" element={<MetronomePractice />} />
         </Routes>
       </div>
-    </Router>
   );
 }
 

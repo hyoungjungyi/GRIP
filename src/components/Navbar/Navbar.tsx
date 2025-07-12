@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import LoginModal from "./LoginModal";
 import "./Navbar.css"; // Optional: style the navbar separately
+import { useUser } from "./UserContext";
 
 const Navbar: React.FC = () => {
+  const { user, logout } = useUser();
   const [isLoginOpen, setIsLoginOpen] = useState<boolean>(false);
 
   const openLogin = () => setIsLoginOpen(true);
@@ -22,9 +24,18 @@ const Navbar: React.FC = () => {
             <Link to="/mypage">My Page</Link>
           </li>
           <li>
-            <button onClick={openLogin} className="login-btn">
-              Login
-            </button>
+            {user ? (
+              <>
+                <span className="username">{user.username}님</span>
+                <button onClick={logout} className="login-btn">
+                  Logout
+                </button>
+              </>
+            ) : (
+              <button onClick={openLogin} className="login-btn">
+                Login
+              </button>
+            )}
           </li>
         </ul>
       </nav>

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import axios from "axios";
 import "./LoginModal.css";
+import { useUser } from "./UserContext";
 
 type LoginModalProps = {
   isOpen: boolean;
@@ -12,9 +13,13 @@ declare global {
     google: any;
   }
 }
+
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const googleDivRef = useRef<HTMLDivElement>(null);
+
   const baseURL = import.meta.env.VITE_API_BASE_URL;
+
+  const { setUser } = useUser();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -32,10 +37,20 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
               token: googleToken,
             });
             console.log("로그인 성공 응답 데이터:", res.data);
-            const jwt = res.data.jwt;
+            const accessToken = res.data.token;
 
-            localStorage.setItem("jwt", jwt);
+            localStorage.setItem("accessToken", accessToken);
             alert("로그인 성공!");
+
+            const profileRes = await axios.get(
+              "http://localhost:5500/api/auth/profile",
+              {
+                headers: { Authorization: `Bearer ${accessToken}` },
+              }
+            );
+
+            setUser(profileRes.data);
+
             onClose();
           } catch (err) {
             console.error("구글 로그인 실패", err);
