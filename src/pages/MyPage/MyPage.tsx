@@ -1,5 +1,4 @@
 import Navbar from "../../components/Navbar/Navbar";
-import React from "react";
 import styles from "./MyPage.module.css";
 import Calendar from "./components/Calendar";
 import Timer from "./components/Timer";
