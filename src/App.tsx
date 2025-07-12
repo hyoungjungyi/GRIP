@@ -5,9 +5,10 @@ import Tuner from "./pages/Tuner/Tuner";
 import SheetList from "./pages/SheetList";
 import MyPage from "./pages/MyPage";
 
+
 function App() {
   return (
-    <Router>
+
       <div className="app-container">
         <Navbar />
         <Routes>
@@ -16,7 +17,6 @@ function App() {
           <Route path="/mypage" element={<MyPage />} />
         </Routes>
       </div>
-    </Router>
   );
 }
 
