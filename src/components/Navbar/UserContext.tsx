@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
+//로그인 후 구현
 type User = {
   id: number;
   username: string;
