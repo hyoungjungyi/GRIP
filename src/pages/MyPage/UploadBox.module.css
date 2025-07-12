@@ -1,0 +1,116 @@
+/* UploadBox.module.css */
+.uploadBox {
+  height: 150px;
+  background: #181818;
+  border: 2px dashed #fff;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  box-shadow: 0 2px 8px #222;
+  color: #fff;
+}
+.uploadBox:hover {
+  border-color: #fff;
+  background: #222;
+}
+.uploadBox.dragOver {
+  border-color: #fff !important;
+  background: #333 !important;
+  box-shadow: 0 0 0 4px #fff2;
+}
+.popupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.popupBox {
+  background: #181818;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px #222;
+  padding: 32px 40px;
+  min-width: 320px;
+  max-width: 90vw;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+}
+.popupHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 18px;
+  color: #fff;
+}
+.popupClose {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #d32f2f;
+  font-weight: bold;
+}
+.fileInput {
+  margin-bottom: 12px;
+  color: #fff;
+}
+.fileInfo {
+  margin-bottom: 12px;
+  font-size: 15px;
+  color: #fff;
+}
+.buttonRow {
+  display: flex;
+  gap: 12px;
+}
+.uploadBtn {
+  padding: 8px 18px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s, color 0.2s;
+}
+.uploadBtn:disabled {
+  background: #333;
+  color: #888;
+  cursor: not-allowed;
+}
+.uploadIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.uploadText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.uploadTitle {
+  font-size: 20px;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.uploadDesc {
+  font-size: 15px;
+  color: #bbb;
+}

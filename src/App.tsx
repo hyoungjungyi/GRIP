@@ -2,7 +2,7 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Tuner from "./pages/Tuner/Tuner";
-import MyPage from "./pages/MyPage";
+import MyPage from "./pages/MyPage/MyPage";
 import MetronomePractice from "./pages/Metronome/MetronomePractice";
 import SheetView from "./pages/SheetView/SheetView";
 

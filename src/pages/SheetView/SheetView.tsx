@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../../components/Navbar/Navbar";
 import styles from "./SheetView.module.css";
 import { useNavigate } from "react-router-dom";
 
