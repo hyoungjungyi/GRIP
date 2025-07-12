@@ -22,6 +22,11 @@ const MetronomePractice: React.FC = () => {
     <>
       <Navbar />
       <div className={styles.metronomePracticeContainer}>
+        <div className={styles.chromaticSection}>
+          <div style={{ flex: 1 }} />
+          <div className={styles.metronomeSection}></div>
+        </div>
+
         {/* Metronome Section (Main) */}
         <section className={styles.metronomeSection}>
           <h1>Metronome</h1>
@@ -29,7 +34,7 @@ const MetronomePractice: React.FC = () => {
         </section>
 
         {/* Chromatic Practice & Practice Log Section (Side) */}
-        <div className={styles.sideSection}>
+        <div className={styles.chromaticSection}>
           <section>
             <h2>Chromatic Practice</h2>
             <ChromaticPractice addLog={addLog} />

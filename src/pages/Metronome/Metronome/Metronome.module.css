@@ -3,11 +3,13 @@
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  padding: 20px;
+  padding: 50px; /* 원래의 3배 */
   border: 1px solid #ccc;
   border-radius: 8px;
+  font-size: 2rem; /* 내부 텍스트도 커지게 하려면 */
+  width: 600px; /* 원하는 너비로 지정 */
+  height: auto; /* 필요시 고정 높이도 설정 */
 }
-
 .bpmControl {
   display: flex;
   align-items: center;
@@ -31,5 +33,5 @@
 }
 
 .indicator.active {
-  background-color: #4CAF50;
+  background-color: #4caf50;
 }

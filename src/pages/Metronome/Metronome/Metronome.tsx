@@ -15,8 +15,14 @@ const Metronome: React.FC = () => {
   useEffect(() => {
     if (isPlaying) {
       intervalRef.current = window.setInterval(() => {
-        audioRef.current?.play();
-        setBeatCount((prev) => prev + 1);
+        setBeatCount((prev) => {
+          // 사운드와 불빛이 동시에
+          if (audioRef.current) {
+            audioRef.current.currentTime = 0;
+            audioRef.current.play();
+          }
+          return prev + 1;
+        });
       }, (60 / bpm) * 1000);
     } else {
       if (intervalRef.current) {
@@ -54,11 +60,16 @@ const Metronome: React.FC = () => {
         />
       </div>
       <button onClick={handleStartStop}>{isPlaying ? "Stop" : "Start"}</button>
-      <div
-        className={`${styles.indicator} ${
-          isPlaying && beatCount % 2 === 0 ? styles.active : ""
-        }`}
-      ></div>
+      <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
+        {[0, 1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className={`${styles.indicator} ${
+              isPlaying && beatCount % 4 === i ? styles.active : ""
+            }`}
+          />
+        ))}
+      </div>
     </div>
   );
 };
