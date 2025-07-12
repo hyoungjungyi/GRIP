@@ -5,20 +5,20 @@ import Tuner from "./pages/Tuner/Tuner";
 import MyPage from "./pages/MyPage/MyPage";
 import MetronomePractice from "./pages/Metronome/MetronomePractice";
 import SheetView from "./pages/SheetView/SheetView";
-
+import Archive from "./pages/MyPage/Archive";
 
 function App() {
   return (
-
-      <div className="app-container">
-        <Navbar />
-        <Routes>
-          <Route path="/tuner" element={<Tuner />} />
-          <Route path="/sheetView" element={<SheetView />} />
-          <Route path="/mypage" element={<MyPage />} />
-          <Route path="/metronome-practice" element={<MetronomePractice />} />
-        </Routes>
-      </div>
+    <div className="app-container">
+      <Navbar />
+      <Routes>
+        <Route path="/tuner" element={<Tuner />} />
+        <Route path="/sheetView" element={<SheetView />} />
+        <Route path="/mypage" element={<MyPage />} />
+        <Route path="/metronome-practice" element={<MetronomePractice />} />
+        <Route path="/archive" element={<Archive />} />
+      </Routes>
+    </div>
   );
 }
 

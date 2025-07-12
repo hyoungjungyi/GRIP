@@ -5,19 +5,26 @@ const getDaysInMonth = (year: number, month: number) => {
   return new Date(year, month + 1, 0).getDate();
 };
 
-const mockPracticeData: Record<string, { time: string; activity: string }[]> = {
-  "20250712": [
-    { time: "10:00", activity: "크로메틱 연습 20분" },
-    { time: "15:00", activity: "곡 연습 30분" },
-  ],
-  "20250713": [{ time: "11:00", activity: "스케일 연습 15분" }],
-};
+interface PracticeData {
+  date: string;
+  total_time: number;
+  achieved: boolean;
+  recording_url?: string;
+  chromatic?: Array<{
+    fingering: string;
+    bpm: number;
+    duration: number;
+  }>;
+}
 
 const Calendar: React.FC = () => {
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth()); // 0-indexed
   const [popupDay, setPopupDay] = useState<number | null>(null);
+  const [popupData, setPopupData] = useState<PracticeData | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const daysInMonth = getDaysInMonth(year, month);
   const firstDay = new Date(year, month, 1).getDay(); // 0: Sunday
@@ -39,11 +46,37 @@ const Calendar: React.FC = () => {
     }
   };
 
-  const handleDayClick = (day: number) => {
-    if (day > 0) setPopupDay(day);
+  const handleDayClick = async (day: number) => {
+    if (day > 0) {
+      setPopupDay(day);
+      setLoading(true);
+      setError(null);
+      setPopupData(null);
+      const dateStr = `${year}-${(month + 1).toString().padStart(2, "0")}-${day
+        .toString()
+        .padStart(2, "0")}`;
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+      try {
+        const res = await fetch(
+          `${baseUrl}/api/practice/history?user_id=1&date=${dateStr}`
+        );
+        if (!res.ok) throw new Error("Unable to fetch data.");
+        const data: PracticeData = await res.json();
+        setPopupData(data);
+      } catch (e: any) {
+        setError(e.message || "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
-  const closePopup = () => setPopupDay(null);
+  const closePopup = () => {
+    setPopupDay(null);
+    setPopupData(null);
+    setError(null);
+    setLoading(false);
+  };
 
   const weeks: number[][] = [];
   let day = 1 - firstDay;
@@ -60,12 +93,6 @@ const Calendar: React.FC = () => {
     weeks.push(week);
   }
 
-  // 목업 데이터 키 생성
-  const getPracticeKey = (d: number) =>
-    `${year}${(month + 1).toString().padStart(2, "0")}${d
-      .toString()
-      .padStart(2, "0")}`;
-
   return (
     <div className={styles.calendarContainer}>
       <div className={styles.header}>
@@ -73,7 +100,7 @@ const Calendar: React.FC = () => {
           &lt;
         </button>
         <span className={styles.monthLabel}>
-          {year}년 {month + 1}월
+          {year}-{(month + 1).toString().padStart(2, "0")}
         </span>
         <button className={styles.arrow} onClick={handleNextMonth}>
           &gt;
@@ -82,13 +109,13 @@ const Calendar: React.FC = () => {
       <table className={styles.calendarTable}>
         <thead>
           <tr>
-            <th>일</th>
-            <th>월</th>
-            <th>화</th>
-            <th>수</th>
-            <th>목</th>
-            <th>금</th>
-            <th>토</th>
+            <th>Sun</th>
+            <th>Mon</th>
+            <th>Tue</th>
+            <th>Wed</th>
+            <th>Thu</th>
+            <th>Fri</th>
+            <th>Sat</th>
           </tr>
         </thead>
         <tbody>
@@ -113,24 +140,57 @@ const Calendar: React.FC = () => {
           <div className={styles.popupBox}>
             <div className={styles.popupHeader}>
               <span>
-                {year}년 {month + 1}월 {popupDay}일 연습 데이터
+                Practice Data for {year}-
+                {(month + 1).toString().padStart(2, "0")}-
+                {popupDay?.toString().padStart(2, "0")}
               </span>
               <button className={styles.popupClose} onClick={closePopup}>
                 X
               </button>
             </div>
-            <ul>
-              {(
-                mockPracticeData[getPracticeKey(popupDay)] || [
-                  { time: "", activity: "연습 데이터 없음" },
-                ]
-              ).map((item: { time: string; activity: string }, idx: number) => (
-                <li key={idx}>
-                  {item.time && <strong>{item.time} </strong>}
-                  {item.activity}
+            {loading ? (
+              <div>Loading...</div>
+            ) : error ? (
+              <div style={{ color: "#f55" }}>{error}</div>
+            ) : popupData ? (
+              <ul>
+                <li>
+                  <strong>Total Practice Time:</strong> {popupData.total_time}{" "}
+                  min
                 </li>
-              ))}
-            </ul>
+                <li>
+                  <strong>Goal:</strong>{" "}
+                  {popupData.achieved ? "Achieved" : "Not achieved"}
+                </li>
+                {popupData.recording_url && (
+                  <li>
+                    <strong>Recording:</strong>{" "}
+                    <a
+                      href={popupData.recording_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Listen
+                    </a>
+                  </li>
+                )}
+                {popupData.chromatic && popupData.chromatic.length > 0 && (
+                  <li>
+                    <strong>Chromatic Practice:</strong>
+                    <ul>
+                      {popupData.chromatic.map((c, idx) => (
+                        <li key={idx}>
+                          Pattern: {c.fingering}, BPM: {c.bpm}, Time:{" "}
+                          {c.duration} min
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                )}
+              </ul>
+            ) : (
+              <div>No practice data</div>
+            )}
           </div>
         </div>
       )}

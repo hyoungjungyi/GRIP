@@ -71,3 +71,259 @@
   font-weight: bold;
   font-size: 18px;
 }
+.todayTitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+  color: #111;
+  letter-spacing: 1px;
+}
+.todayTitleBtn {
+  margin-left: auto;
+  padding: 8px 22px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.todayTitleBtn:hover {
+  background: #333;
+}
+.goalPopupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.goalPopupBox {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px #222;
+  padding: 32px 40px;
+  min-width: 320px;
+  max-width: 90vw;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  color: #111;
+}
+.goalPopupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+.goalPopupClose {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #333;
+}
+.goalPopupContent {
+  font-size: 1rem;
+}
+.goalPopupTimeRow {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  justify-content: center;
+  align-items: center;
+}
+.goalPopupTimeInput {
+  width: 50px;
+  text-align: center;
+  font-size: 1rem;
+  color: #5f5f5f;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 4px 0;
+  background: #fafafa;
+}
+.goalPopupTimeInput::placeholder {
+  color: #111;
+}
+.goalPopupTimeLabel {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.goalPopupBtn {
+  padding: 8px 22px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.goalPopupBtn:hover {
+  background: #333;
+}
+.toggleSwitch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  margin-left: 12px;
+}
+.toggleSwitch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.toggleSlider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ccc;
+  border-radius: 24px;
+  transition: 0.2s;
+}
+.toggleSwitch input:checked + .toggleSlider {
+  background: #111;
+}
+.toggleSlider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+.toggleSwitch input:checked + .toggleSlider:before {
+  transform: translateX(20px);
+}
+.pageWrapper {
+  position: relative;
+  width: 100vw;
+  height: calc(100vh - 80px); /* Navbar 높이만큼 제외한 전체 높이로 통일 */
+  min-height: 600px;
+  overflow: hidden;
+}
+.slidePage {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80vw;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
+  z-index: 10;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+.archiveContainer {
+  width: 100vw;
+  height: 100%;
+  min-height: 600px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #111;
+  position: relative;
+  box-shadow: 0 0 24px #2222;
+}
+.slideLeft {
+  transform: translate(-150vw, 0); /* 중앙 기준에서 왼쪽으로 슬라이드 */
+}
+.slideRight {
+  transform: translateX(-50%);
+}
+.hidden {
+  transform: translate(80vw, 0);
+}
+.slideChevronBtn {
+  position: absolute;
+  top: 60%; /* 더 아래로 */
+  right: 12px;
+  transform: translateY(-50%);
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px #2222;
+  cursor: pointer;
+  z-index: 20;
+  transition: background 0.2s;
+}
+.slideChevronBtn:hover {
+  background: #333;
+}
+.slideChevronLeftBtn {
+  position: absolute;
+  top: 56%;
+  left: 12px;
+  transform: translateY(-50%);
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px #2222;
+  cursor: pointer;
+  z-index: 20;
+  transition: background 0.2s;
+}
+.slideChevronLeftBtn:hover {
+  background: #333;
+}
+.goalPopupTimeSection {
+  margin-bottom: 16px;
+}
+.goalPopupRecordingSection {
+  margin-bottom: 16px;
+}
+.goalPopupRecordingLabel {
+  font-weight: 600;
+}
+.goalPopupChromaticSection {
+  margin-bottom: 16px;
+}
+.goalPopupChromaticLabel {
+  font-weight: 600;
+}
+.goalPopupBtnRow {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+}

@@ -1,36 +1,66 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./PracticeVideoList.module.css";
 
 const mockVideos = [
   {
     id: 1,
-    title: "크로메틱 연습 영상 1",
+    title: "Chromatic Practice Video 1",
     url: "https://www.w3schools.com/html/mov_bbb.mp4",
     date: "2025-07-10T15:30:00.000Z",
   },
   {
     id: 2,
-    title: "곡 연습 영상 2",
+    title: "Song Practice Video 2",
     url: "https://www.w3schools.com/html/movie.mp4",
     date: "2025-07-11T18:00:00.000Z",
   },
   {
     id: 3,
-    title: "스케일 연습 영상 3",
+    title: "Scale Practice Video 3",
     url: "https://www.w3schools.com/html/mov_bbb.mp4",
     date: "2025-07-12T09:20:00.000Z",
   },
 ];
 
 const PracticeVideoList: React.FC = () => {
+  const [videos, setVideos] = useState<typeof mockVideos>(mockVideos);
+  const [apiFailed, setApiFailed] = useState(false);
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const res = await fetch(`${baseUrl}/api/files/videos?user_id=1`);
+        if (!res.ok) throw new Error("API failed");
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setVideos(
+            data.map((v, idx) => ({
+              id: idx + 1,
+              title: v.song_title || "Untitled",
+              url: v.video_url,
+              date: v.date,
+            }))
+          );
+          setApiFailed(false);
+        } else {
+          setApiFailed(true);
+        }
+      } catch (err) {
+        setApiFailed(true);
+      }
+    };
+    fetchVideos();
+  }, [baseUrl]);
+
   return (
     <div className={styles.listContainer}>
-      <div className={styles.listTitle}>전체 연습 영상 리스트</div>
-      {mockVideos.length === 0 ? (
-        <div className={styles.empty}>등록된 연습 영상이 없습니다.</div>
+      <div className={styles.listTitle}>All Practice Videos</div>
+      {videos.length === 0 ? (
+        <div className={styles.empty}>No practice videos registered.</div>
       ) : (
         <ul className={styles.videoList}>
-          {mockVideos.map((video) => (
+          {videos.map((video) => (
             <li key={video.id} className={styles.videoItem}>
               <video
                 src={video.url}
@@ -40,7 +70,9 @@ const PracticeVideoList: React.FC = () => {
                 className={styles.videoThumb}
               />
               <div className={styles.videoInfo}>
-                <div className={styles.videoTitle}>{video.title}</div>
+                <div className={styles.videoTitle}>
+                  {apiFailed ? "response failed" : video.title}
+                </div>
                 <div className={styles.videoDate}>
                   {new Date(video.date).toLocaleString()}
                 </div>
