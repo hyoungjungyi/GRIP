@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import styles from './ChromaticPractice.module.css';
+import React, { useState } from "react";
+import styles from "./ChromaticPractice.module.css";
 
 interface ChromaticPracticeProps {
   addLog: (pattern: string, bpm: number) => void;
 }
 
 const ChromaticPractice: React.FC<ChromaticPracticeProps> = ({ addLog }) => {
-  const [pattern, setPattern] = useState('');
+  const [pattern, setPattern] = useState("");
   const [maxBpm, setMaxBpm] = useState(0);
 
   const handleRecord = () => {
     if (pattern && maxBpm > 0) {
       addLog(pattern, maxBpm);
-      setPattern('');
+      setPattern("");
       setMaxBpm(0);
     }
   };
@@ -33,11 +33,17 @@ const ChromaticPractice: React.FC<ChromaticPracticeProps> = ({ addLog }) => {
       <div className={styles.inputGroup}>
         <label htmlFor="maxBpm">Max BPM:</label>
         <input
-          type="number"
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
           id="maxBpm"
           value={maxBpm}
-          onChange={(e) => setMaxBpm(Number(e.target.value))}
-          min="1"
+          onChange={(e) => {
+            const val = e.target.value;
+            if (/^\d*$/.test(val)) {
+              setMaxBpm(Number(val));
+            }
+          }}
         />
       </div>
       <button onClick={handleRecord}>Record</button>

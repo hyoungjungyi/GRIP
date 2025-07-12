@@ -40,12 +40,17 @@ const Metronome: React.FC = () => {
       <div className={styles.bpmControl}>
         <label htmlFor="bpm">BPM:</label>
         <input
-          type="number"
+          type="text"
           inputMode="numeric"
+          pattern="[0-9]*"
           id="bpm"
           value={bpm}
-          onChange={(e) => setBpm(Number(e.target.value))}
-          min="1"
+          onChange={(e) => {
+            const val = e.target.value;
+            if (/^\d*$/.test(val)) {
+              setBpm(Number(val));
+            }
+          }}
         />
       </div>
       <button onClick={handleStartStop}>{isPlaying ? "Stop" : "Start"}</button>

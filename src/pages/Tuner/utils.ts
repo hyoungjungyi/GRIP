@@ -48,7 +48,7 @@ export function getClosestString(frequency: number): string | null {
     e: 329.63, // E4
   };
 
-  const threshold = 10; // Hz
+  const threshold = 50; // Hz
   let closestString: string | null = null;
   let minDifference = Infinity;
 

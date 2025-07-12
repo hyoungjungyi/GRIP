@@ -1,5 +1,5 @@
-import React from 'react';
-import styles from './PracticeLog.module.css';
+import React from "react";
+import styles from "./PracticeLog.module.css";
 
 interface PracticeLogEntry {
   pattern: string;
