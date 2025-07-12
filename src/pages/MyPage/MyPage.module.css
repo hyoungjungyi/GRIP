@@ -1,0 +1,73 @@
+/* MyPage.module.css */
+.container {
+  padding: 32px;
+}
+.topContainer {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+.calendarBox {
+  flex: 1;
+  min-width: 220px;
+  height: 320px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 20px;
+}
+.timerBox {
+  flex: 1;
+  min-width: 220px;
+  height: 320px;
+  background: #e3f2fd;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 20px;
+}
+.rightBox {
+  flex: 1;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.uploadBox {
+  height: 150px;
+  background: #fff3e0;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+}
+.chromaticList {
+  height: 150px;
+  background: #fce4ec;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+}
+.bottomContainer {
+  margin-top: 16px;
+}
+.practiceList {
+  height: 180px;
+  background: #e8f5e9;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+}

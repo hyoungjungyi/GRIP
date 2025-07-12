@@ -1,9 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
 import { usePitch } from "./usePitch";
-import { getNoteFromFrequency } from "./utils";
+import { getNoteFromFrequency, getClosestString } from "./utils";
 import "./PitchVisualizer.css";
 
-const PitchVisualizer: React.FC = () => {
+interface PitchVisualizerProps {
+  setActiveString: (stringName: string | null) => void;
+}
+
+const PitchVisualizer: React.FC<PitchVisualizerProps> = ({
+  setActiveString,
+}) => {
   const pitch = usePitch();
   const [history, setHistory] = useState<number[]>([]);
   const [lastNote, setLastNote] = useState<string | null>(null);
@@ -13,25 +19,38 @@ const PitchVisualizer: React.FC = () => {
     if (pitch) {
       const noteInfo = getNoteFromFrequency(pitch);
       if (noteInfo) {
-        setLastNote(`${noteInfo.note}${noteInfo.octave}`);
+        const closestString = getClosestString(pitch);
+        if (closestString) {
+          setLastNote(closestString);
+        }
+        setActiveString(closestString);
+      } else {
+        setActiveString(null);
       }
-      setHistory((prev) => [...prev, pitch].slice(-100)); // Keep last 100 points
+      setHistory((prev) => [...prev, pitch].slice(-100));
     } else {
-      const timer = setTimeout(() => setLastNote(null), 1000); // Hide after 1s
+      const timer = setTimeout(() => {
+        setLastNote(null);
+        setActiveString(null);
+      }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [pitch]);
+  }, [pitch, setActiveString]);
 
   const getPath = () => {
-    if (!svgRef.current) return "";
-    const { width, height } = svgRef.current.getBoundingClientRect();
+    const width = 400;
+    const height = 300;
     const minFreq = 80; // E2
     const maxFreq = 330; // E4
+    const stepX = 4;
 
     return history
       .map((p, i) => {
-        const x = (i / (history.length - 1)) * width;
-        const y = height - ((p - minFreq) / (maxFreq - minFreq)) * height;
+        const x = width - (history.length - 1 - i) * stepX;
+        const deviation =
+          (p - (minFreq + maxFreq) / 2) / ((maxFreq - minFreq) / 2);
+        const centerY = height / 2;
+        const y = centerY - deviation * centerY * 0.5;
         return `${x},${y}`;
       })
       .join(" ");
@@ -42,7 +61,14 @@ const PitchVisualizer: React.FC = () => {
       <div className="tuner-display">
         <div className="grid-background"></div>
         <div className="target-note">{lastNote || "--"}</div>
-        <svg ref={svgRef} className="pitch-graph" width="100%" height="100%">
+        <svg
+          ref={svgRef}
+          className="pitch-graph"
+          width="400"
+          height="300"
+          viewBox="0 0 400 300"
+          preserveAspectRatio="none"
+        >
           <polyline
             fill="none"
             stroke="red"

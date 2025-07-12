@@ -45,12 +45,16 @@ export function usePitch() {
   const analyserRef = useRef<AnalyserNode | null>(null);
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
   const buffer = useRef<Float32Array>(new Float32Array(2048));
+  const streamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
     let isMounted = true;
+    console.log("[usePitch] mount");
 
     async function init() {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+      console.log("[usePitch] mic started");
       const audioContext = new AudioContext();
       audioContextRef.current = audioContext;
 
@@ -71,9 +75,12 @@ export function usePitch() {
           audioContext.sampleRate
         );
         if (detectedPitch && detectedPitch >= 50 && detectedPitch <= 1000) {
-          setPitch(detectedPitch);
+          const jitteredPitch = detectedPitch + Math.random() * 0.00001;
+          setPitch(jitteredPitch);
         } else {
-          setPitch(null);
+          const placeholderPitch = 0;
+          const jitterPlaceholder = placeholderPitch + Math.random() * 0.00001;
+          setPitch(jitterPlaceholder);
         }
         requestAnimationFrame(update);
       };
@@ -85,6 +92,12 @@ export function usePitch() {
     return () => {
       isMounted = false;
       audioContextRef.current?.close();
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+        console.log("[usePitch] mic stopped");
+      }
+      console.log("[usePitch] unmount");
     };
   }, []);
 

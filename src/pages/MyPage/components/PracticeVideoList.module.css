@@ -1,0 +1,57 @@
+/* PracticeVideoList.module.css */
+.listContainer {
+  background: #e8f5e9;
+  border-radius: 12px;
+  padding: 18px 16px;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto;
+}
+.listTitle {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #388e3c;
+}
+.empty {
+  color: #888;
+  font-size: 15px;
+  text-align: center;
+  margin-top: 24px;
+}
+.videoList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+}
+.videoItem {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px #eee;
+  padding: 10px;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.videoThumb {
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.videoInfo {
+  text-align: center;
+}
+.videoTitle {
+  font-weight: bold;
+  font-size: 15px;
+  margin-bottom: 2px;
+  color: #388e3c;
+}
+.videoDate {
+  font-size: 13px;
+  color: #888;
+}
