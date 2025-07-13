@@ -13,14 +13,14 @@
 
 .tuner-container {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - 80px); /* Navbar 높이만큼 제외 */
   width: 100%;
   box-sizing: border-box;
-  background: var(--bg-color);
+  background: #fff; /* 배경 흰색으로 변경 */
   font-family: var(--font-family);
-  align-items: center; /* 상하 중앙 정렬 */
+  align-items: center;
   justify-content: center;
-  padding-top: 80px; /* 기존 유지, 필요시 조정 */
+  padding-top: 80px; /* Navbar 아래로 시작 */
 }
 
 .pitch-visualizer-container {

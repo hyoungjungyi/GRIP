@@ -52,8 +52,14 @@ const ChromaticPractice: React.FC<ChromaticPracticeProps> = ({
       >
         {buttonText}
       </button>
-      <div style={{ margin: "8px 0", fontSize: "14px" }}>
-        연습 시간: {practiceDuration}초
+      <div>
+        <div style={{ margin: "4px 0", fontSize: "14px", fontWeight: "bold" }}>
+          Practice time: {practiceDuration} seconds
+        </div>{" "}
+        <div style={{ margin: "4px 0", fontSize: "10px" }}>
+          Caution! If you leave the screen during practice time tracking, the
+          timer will reset.
+        </div>
       </div>
       <div className={styles.inputGroup}>
         <label htmlFor="pattern">Pattern:</label>

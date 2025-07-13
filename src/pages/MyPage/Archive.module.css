@@ -1,7 +1,6 @@
 /* Archive.module.css */
 .archiveContainer {
   width: 100%;
-  height: 100%;
   min-height: 600px;
   background: #fff;
   display: flex;
@@ -12,6 +11,7 @@
   color: #111;
   position: relative;
   box-shadow: 0 0 24px #2222;
+  padding-bottom: 48px;
 }
 .slideChevronLeftBtn {
   position: fixed;
@@ -40,10 +40,14 @@
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
-  margin-top: 80px; /* navbar 높이만큼 */
+  margin-top: 80px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 4px 32px #2221;
+  padding: 32px 0 24px 0;
 }
 .songArchiveList {
   width: 100%;
@@ -53,20 +57,25 @@
   gap: 32px;
 }
 .songSection {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px #2222;
+  background: #f8f8fa;
+  border-radius: 18px;
+  box-shadow: 0 2px 16px #2221;
   padding: 24px 32px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   position: relative;
+  transition: box-shadow 0.2s, background 0.2s;
+}
+.songSection:hover {
+  box-shadow: 0 4px 32px #2222;
+  background: #f0f0f5;
 }
 .songTitle {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 700;
   margin-bottom: 18px;
-  color: #111;
+  color: #222;
   letter-spacing: 1px;
 }
 .archiveList {
@@ -93,6 +102,11 @@
   padding: 0;
   overflow: hidden;
   position: relative;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.archiveItem:hover {
+  box-shadow: 0 4px 16px #2222;
+  transform: translateY(-4px) scale(1.03);
 }
 .archiveDate {
   font-size: 0.95rem;
@@ -129,25 +143,6 @@
   font-size: 1rem;
   margin-top: 8px;
   text-align: center;
-}
-.expandBtn {
-  margin: 10px 0 0 0;
-  padding: 6px 18px;
-  font-size: 1rem;
-  font-weight: 600;
-  background: #111;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.expandBtn:hover {
-  background: #333;
-}
-.videoContainer {
-  width: 100%;
-  margin-top: 12px;
 }
 .expandArrowWrapper {
   position: absolute;

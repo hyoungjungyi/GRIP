@@ -113,7 +113,12 @@ const SheetView: React.FC = () => {
                 <div className={styles.albumRow}>
                   {error ? (
                     Array.from({ length: 3 }).map((_, idx) => (
-                      <div key={idx} className={styles.albumCard}>
+                      <div
+                        key={idx}
+                        className={styles.albumCard}
+                        onClick={() => handleAlbumClick(0)}
+                        style={{ cursor: "pointer" }}
+                      >
                         <img
                           src={albumCover}
                           alt="cover"
@@ -154,7 +159,12 @@ const SheetView: React.FC = () => {
                 <div className={styles.albumRow}>
                   {error ? (
                     Array.from({ length: 3 }).map((_, idx) => (
-                      <div key={idx} className={styles.albumCard}>
+                      <div
+                        key={idx}
+                        className={styles.albumCard}
+                        onClick={() => handleAlbumClick(0)}
+                        style={{ cursor: "pointer" }}
+                      >
                         <img
                           src={albumCover}
                           alt="cover"
@@ -193,7 +203,12 @@ const SheetView: React.FC = () => {
                 <div className={styles.albumRow}>
                   {error ? (
                     Array.from({ length: 3 }).map((_, idx) => (
-                      <div key={idx} className={styles.albumCard}>
+                      <div
+                        key={idx}
+                        className={styles.albumCard}
+                        onClick={() => handleAlbumClick(0)}
+                        style={{ cursor: "pointer" }}
+                      >
                         <img
                           src={albumCover}
                           alt="cover"

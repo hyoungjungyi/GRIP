@@ -72,10 +72,11 @@ const Archive: React.FC = () => {
           <div className={styles.songArchiveList}>
             {songs.map((song) => {
               const hasVideos = archives[song.id]?.length > 0;
+              const isLoading = loading && !hasVideos;
               return (
                 <div key={song.id} className={styles.songSection}>
                   <h3 className={styles.songTitle}>{song.title}</h3>
-                  {hasVideos && (
+                  {(hasVideos || isLoading) && (
                     <div className={styles.expandArrowWrapper}>
                       <button
                         className={styles.expandArrowBtn}
@@ -88,50 +89,53 @@ const Archive: React.FC = () => {
                       </button>
                     </div>
                   )}
-                  {hasVideos && expanded[song.id] && (
-                    <div className={styles.videoContainer}>
-                      <ul className={styles.archiveList}>
-                        {archives[song.id].map((item, idx) => (
-                          <li key={idx} className={styles.archiveItem}>
-                            <div className={styles.archiveDate}>
-                              {item.date}
-                            </div>
-                            {item.video_url && (
-                              <video
-                                src={item.video_url}
-                                controls
-                                width={180}
-                                height={110}
-                                className={styles.archiveVideo}
-                              />
-                            )}
-                            {item.recording_url && (
-                              <audio
-                                src={item.recording_url}
-                                controls
-                                className={styles.archiveAudio}
-                              />
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  {!hasVideos && !loading && (
+                  {(hasVideos || (isLoading && expanded[song.id])) &&
+                    expanded[song.id] && (
+                      <div className={styles.videoContainer}>
+                        <ul className={styles.archiveList}>
+                          {hasVideos
+                            ? archives[song.id].map((item, idx) => (
+                                <li key={idx} className={styles.archiveItem}>
+                                  <div className={styles.archiveDate}>
+                                    {item.date}
+                                  </div>
+                                  {item.video_url && (
+                                    <video
+                                      src={item.video_url}
+                                      controls
+                                      width={180}
+                                      height={110}
+                                      className={styles.archiveVideo}
+                                    />
+                                  )}
+                                  {item.recording_url && (
+                                    <audio
+                                      src={item.recording_url}
+                                      controls
+                                      className={styles.archiveAudio}
+                                    />
+                                  )}
+                                </li>
+                              ))
+                            : [
+                                <li
+                                  key="loading"
+                                  className={styles.archiveItem}
+                                >
+                                  <div className={styles.archiveDate}></div>
+                                  <div
+                                    className={styles.archiveVideoPlaceholder}
+                                  >
+                                    Loading...
+                                  </div>
+                                </li>,
+                              ]}
+                        </ul>
+                      </div>
+                    )}
+                  {!hasVideos && !isLoading && (
                     <div className={styles.empty}>
                       No archive for this song.
-                    </div>
-                  )}
-                  {loading && (
-                    <div className={styles.videoContainer}>
-                      <ul className={styles.archiveList}>
-                        <li className={styles.archiveItem}>
-                          <div className={styles.archiveDate}></div>
-                          <div className={styles.archiveVideoPlaceholder}>
-                            Loading...
-                          </div>
-                        </li>
-                      </ul>
                     </div>
                   )}
                 </div>

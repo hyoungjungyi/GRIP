@@ -7,6 +7,8 @@ import PracticeVideoList from "./components/PracticeVideoList";
 import Archive from "./Archive";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTimer } from "../../context/TimerContext";
+import React from "react";
 
 const getTodayString = () => {
   const today = new Date();
@@ -25,15 +27,19 @@ const MyPage = () => {
   const [goalChromatic, setGoalChromatic] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const navigate = useNavigate();
+  const { goalMinutes, setGoalMinutes } = useTimer();
+  const [inputGoal, setInputGoal] = React.useState(goalMinutes);
 
   const handleGoalSetting = () => {
     setShowGoalPopup(true);
   };
 
   const handleGoalSave = () => {
-    // Convert to number, fallback to 0 if empty
     const h = Number(goalTime.hours) || 0;
     const m = Number(goalTime.minutes) || 0;
+    const totalMinutes = h * 60 + m;
+    setGoalMinutes(totalMinutes); // 연동: 타이머 목표 시간 설정
+    setInputGoal(totalMinutes); // 입력값도 동기화
     alert(
       `Goal Saved!\nTime: ${h}h ${m}m\nRecording: ${
         goalRecording ? "On" : "Off"
@@ -42,13 +48,15 @@ const MyPage = () => {
     setShowGoalPopup(false);
   };
 
+  const handleSetGoal = () => {
+    setGoalMinutes(inputGoal);
+  };
+
   return (
     <div className={styles.pageWrapper}>
       <div className={styles.container}>
         <div className={styles.todayTitle}>
-          <span style={{ flex: 1, textAlign: "center" }}>
-            {getTodayString()}
-          </span>
+          <span className={styles.todayTitleText}>{getTodayString()}</span>
           <button className={styles.todayTitleBtn} onClick={handleGoalSetting}>
             Set Goal
           </button>

@@ -25,23 +25,22 @@ const ChromaticList: React.FC = () => {
   return (
     <div className={styles.listContainer}>
       <div className={styles.listTitle}>Chromatic Practice List</div>
-      {logs.length === 0 ? (
-        <div className={styles.empty}>No practice logs.</div>
-      ) : (
-        <ul className={styles.logList}>
-          {logs.map((log, idx) => (
-            <li key={idx} className={styles.logItem}>
-              <div className={styles.pattern}>{log.pattern}</div>
-              <div className={styles.detail}>
-                BPM: <b>{log.bpm}</b> / Time: <b>{log.duration} sec</b>
-              </div>
-              <div className={styles.timestamp}>
-                {new Date(log.timestamp).toLocaleString()}
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+      <div className={styles.scrollArea}>
+        {logs.length === 0 ? (
+          <div className={styles.empty}>No practice logs.</div>
+        ) : (
+          <ul className={styles.logList}>
+            {logs.map((log, idx) => (
+              <li key={idx} className={styles.logItem}>
+                <span className={styles.pattern}>{log.pattern}</span>
+                <span className={styles.detail}>
+                  BPM: <b>{log.bpm}</b> / Time: <b>{log.duration} sec</b>
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };
