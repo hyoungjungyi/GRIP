@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./PracticeVideoList.module.css";
+import { getAuthHeadersForGet, getApiBaseUrl } from "../../../utils/apiUtils";
 
 const mockVideos = [
   {
@@ -25,12 +26,15 @@ const mockVideos = [
 const PracticeVideoList: React.FC = () => {
   const [videos, setVideos] = useState<typeof mockVideos>(mockVideos);
   const [apiFailed, setApiFailed] = useState(false);
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+  const baseUrl = getApiBaseUrl();
 
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const res = await fetch(`${baseUrl}/api/files/videos?user_id=1`);
+        const res = await fetch(`${baseUrl}/api/files/videos`, {
+          method: "GET",
+          headers: getAuthHeadersForGet(),
+        });
         if (!res.ok) throw new Error("API failed");
         const data = await res.json();
         if (Array.isArray(data)) {

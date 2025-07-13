@@ -21,16 +21,57 @@ const getTodayString = () => {
 };
 
 const MyPage = () => {
+  // localStorage에서 초기값 로드
+  const getStoredGoalSettings = () => {
+    const stored = localStorage.getItem("practiceGoalSettings");
+    if (stored) {
+      try {
+        const settings = JSON.parse(stored);
+        return {
+          recording: settings.recording || { isOn: false },
+          chromatic: settings.chromatic || {
+            isOn: false,
+            time: { hours: "0", minutes: "0" },
+          },
+        };
+      } catch {
+        return {
+          recording: { isOn: false },
+          chromatic: { isOn: false, time: { hours: "0", minutes: "0" } },
+        };
+      }
+    }
+    return {
+      recording: { isOn: false },
+      chromatic: { isOn: false, time: { hours: "0", minutes: "0" } },
+    };
+  };
+
   const [showGoalPopup, setShowGoalPopup] = useState(false);
   const [goalTime, setGoalTime] = useState({ hours: "0", minutes: "0" });
-  const [goalRecording, setGoalRecording] = useState(false);
-  const [goalChromatic, setGoalChromatic] = useState(false);
+  const storedSettings = getStoredGoalSettings();
+  const [goalRecording, setGoalRecording] = useState(
+    storedSettings.recording?.isOn || false
+  );
+  const [goalChromatic, setGoalChromatic] = useState(
+    storedSettings.chromatic?.isOn || false
+  );
+  const [goalChromaticTime, setGoalChromaticTime] = useState(
+    storedSettings.chromatic?.time || { hours: "0", minutes: "0" }
+  );
   const [showDetail, setShowDetail] = useState(false);
   const navigate = useNavigate();
   const { goalMinutes, setGoalMinutes } = useTimer();
   const [inputGoal, setInputGoal] = React.useState(goalMinutes);
 
   const handleGoalSetting = () => {
+    // 현재 설정된 목표 시간을 가져와서 기본값으로 설정
+    const currentHours = Math.floor(goalMinutes / 60);
+    const currentMinutes = goalMinutes % 60;
+    setGoalTime({
+      hours: currentHours.toString(),
+      minutes: currentMinutes.toString(),
+    });
     setShowGoalPopup(true);
   };
 
@@ -38,12 +79,40 @@ const MyPage = () => {
     const h = Number(goalTime.hours) || 0;
     const m = Number(goalTime.minutes) || 0;
     const totalMinutes = h * 60 + m;
-    setGoalMinutes(totalMinutes); // 연동: 타이머 목표 시간 설정
-    setInputGoal(totalMinutes); // 입력값도 동기화
+
+    const chromaticH = Number(goalChromaticTime?.hours) || 0;
+    const chromaticM = Number(goalChromaticTime?.minutes) || 0;
+
+    setGoalMinutes(totalMinutes);
+    setInputGoal(totalMinutes);
+
+    // 이전 설정을 불러와서 기존 값들을 보존
+    const previousSettings = getStoredGoalSettings();
+
+    // 모든 설정을 localStorage에 저장 (on/off 상태와 설정값 모두 보존)
+    const goalSettings = {
+      recording: {
+        isOn: goalRecording,
+        // 기존 recording 관련 설정이 있다면 보존
+        ...previousSettings.recording,
+      },
+      chromatic: {
+        // 기존 chromatic 관련 설정이 있다면 보존
+        ...previousSettings.chromatic,
+        isOn: goalChromatic, // isOn은 현재 값으로 덮어쓰기
+        time: goalChromaticTime || { hours: "0", minutes: "0" }, // time도 현재 값으로 덮어쓰기
+      },
+    };
+    localStorage.setItem("practiceGoalSettings", JSON.stringify(goalSettings));
+
     alert(
-      `Goal Saved!\nTime: ${h}h ${m}m\nRecording: ${
-        goalRecording ? "On" : "Off"
-      }\nChromatic: ${goalChromatic ? "On" : "Off"}`
+      `Goal Saved!\n` +
+        `Total Practice Time: ${h}h ${m}m\n` +
+        `Include Recording: ${goalRecording ? "On" : "Off"}\n` +
+        `Include Chromatic: ${goalChromatic ? "On" : "Off"}` +
+        (goalChromatic
+          ? `\nChromatic Practice Time: ${chromaticH}h ${chromaticM}m`
+          : "")
     );
     setShowGoalPopup(false);
   };
@@ -88,7 +157,7 @@ const MyPage = () => {
                         setGoalTime({ ...goalTime, hours: e.target.value })
                       }
                       className={styles.goalPopupTimeInput}
-                      placeholder="0"
+                      placeholder=""
                     />
                     <span>h</span>
                     <input
@@ -100,7 +169,7 @@ const MyPage = () => {
                         setGoalTime({ ...goalTime, minutes: e.target.value })
                       }
                       className={styles.goalPopupTimeInput}
-                      placeholder="0"
+                      placeholder=""
                     />
                     <span>m</span>
                   </div>
@@ -118,6 +187,11 @@ const MyPage = () => {
                     <span className={styles.toggleSlider}></span>
                   </label>
                 </div>
+                {goalRecording && (
+                  <div className={styles.recordingWarning}>
+                    You must upload at least one video/recording per day.
+                  </div>
+                )}
                 <div className={styles.goalPopupChromaticSection}>
                   <label className={styles.goalPopupChromaticLabel}>
                     Include Chromatic
@@ -131,15 +205,54 @@ const MyPage = () => {
                     <span className={styles.toggleSlider}></span>
                   </label>
                 </div>
+                {goalChromatic && (
+                  <div className={styles.chromaticTimeSection}>
+                    <label className={styles.chromaticTimeLabel}>
+                      Total Chromatic Practice Time
+                    </label>
+                    <div className={styles.chromaticTimeInputRow}>
+                      <input
+                        type="number"
+                        min={0}
+                        max={23}
+                        value={goalChromaticTime.hours}
+                        onChange={(e) =>
+                          setGoalChromaticTime({
+                            ...goalChromaticTime,
+                            hours: e.target.value,
+                          })
+                        }
+                        className={styles.goalPopupTimeInput}
+                        placeholder=""
+                      />
+                      <span>h</span>
+                      <input
+                        type="number"
+                        min={0}
+                        max={59}
+                        value={goalChromaticTime.minutes}
+                        onChange={(e) =>
+                          setGoalChromaticTime({
+                            ...goalChromaticTime,
+                            minutes: e.target.value,
+                          })
+                        }
+                        className={styles.goalPopupTimeInput}
+                        placeholder=""
+                      />
+                      <span>m</span>
+                    </div>
+                  </div>
+                )}
                 <div className={styles.goalPopupBtnRow}>
                   <button
-                    className={styles.goalPopupBtn}
+                    className={styles.goalPopupSaveBtn}
                     onClick={handleGoalSave}
                   >
                     Save
                   </button>
                   <button
-                    className={styles.goalPopupBtn}
+                    className={styles.goalPopupCancelBtn}
                     onClick={() => setShowGoalPopup(false)}
                   >
                     Cancel

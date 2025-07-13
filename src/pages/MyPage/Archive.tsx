@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Archive.module.css";
+import { getAuthHeadersForGet, getApiBaseUrl } from "../../utils/apiUtils";
 
 const songs = [
   { id: 12, title: "Canon Rock" },
@@ -8,8 +9,7 @@ const songs = [
   { id: 14, title: "Hotel California" },
 ];
 
-const userId = 1;
-const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+const baseUrl = getApiBaseUrl();
 
 const Archive: React.FC = () => {
   const navigate = useNavigate();
@@ -23,9 +23,10 @@ const Archive: React.FC = () => {
     setError(null);
     Promise.all(
       songs.map((song) =>
-        fetch(
-          `${baseUrl}/api/files/by-song?song_id=${song.id}&user_id=${userId}`
-        )
+        fetch(`${baseUrl}/api/files/by-song?song_id=${song.id}`, {
+          method: "GET",
+          headers: getAuthHeadersForGet(),
+        })
           .then((res) => {
             if (!res.ok) throw new Error("API failed");
             return res.json();

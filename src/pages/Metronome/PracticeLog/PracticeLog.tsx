@@ -11,12 +11,14 @@ interface PracticeLogProps {
   logs: PracticeLogEntry[];
   onDeleteLog?: (index: number) => void;
   onResumeLog?: (log: PracticeLogEntry) => void;
+  onLoadLastPreset?: () => Promise<void>;
 }
 
 const PracticeLog: React.FC<PracticeLogProps> = ({
   logs,
   onDeleteLog,
   onResumeLog,
+  onLoadLastPreset,
 }) => {
   // 오늘 날짜(YYYY-MM-DD)
   const today = new Date().toISOString().slice(0, 10);
@@ -37,6 +39,25 @@ const PracticeLog: React.FC<PracticeLogProps> = ({
         <div style={{ fontWeight: "bold", marginBottom: "8px" }}>
           Total Practice Time: {totalPracticeTime}초
         </div>
+        {/* 프리셋 불러오기 버튼 */}
+        {onLoadLastPreset && (
+          <button
+            onClick={onLoadLastPreset}
+            style={{
+              marginBottom: "12px",
+              padding: "8px 16px",
+              backgroundColor: "#2196f3",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "14px",
+              fontWeight: "bold",
+            }}
+          >
+            📊 Load Last Preset
+          </button>
+        )}
       </div>
       {todayLogs.length === 0 ? (
         <p>No practice logs yet.</p>

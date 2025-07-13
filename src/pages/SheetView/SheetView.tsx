@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import styles from "./SheetView.module.css";
 import { useNavigate } from "react-router-dom";
+import { getAuthHeadersForGet, getApiBaseUrl } from "../../utils/apiUtils";
+import styles from "./SheetView.module.css";
 
 interface OngoingSong {
   song_id: number;
@@ -33,11 +34,11 @@ const SheetView: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const baseUrl = import.meta.env.VITE_API_BASE_URL;
-    if (!baseUrl) {
-      throw new Error("VITE_API_BASE_URL is not defined.");
-    }
-    fetch(`${baseUrl}/api/songs/all-lists?user_id=1`)
+    const baseUrl = getApiBaseUrl();
+    fetch(`${baseUrl}/api/songs/all-lists`, {
+      method: "GET",
+      headers: getAuthHeadersForGet(),
+    })
       .then((res) => {
         if (!res.ok) throw new Error("API Error");
         return res.json();
@@ -52,12 +53,13 @@ const SheetView: React.FC = () => {
       alert("링크를 입력하세요.");
       return;
     }
-    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    const baseUrl = getApiBaseUrl();
     try {
       const res = await fetch(`${baseUrl}/api/tab-generator`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...getAuthHeadersForGet(),
         },
         body: JSON.stringify({ audio_url: link }),
       });
@@ -104,7 +106,56 @@ const SheetView: React.FC = () => {
         <div className={styles.bottomContainer}>
           {/* Album lists */}
           {loading ? (
-            <div>Loading...</div>
+            <div>
+              {/* Ongoing */}
+              <div className={styles.listSection}>
+                <h2 className={styles.listTitle}>Ongoing</h2>
+                <div className={styles.albumRow}>
+                  {Array.from({ length: 3 }).map((_, idx) => (
+                    <div key={idx} className={styles.albumCard}>
+                      <img
+                        src={albumCover}
+                        alt="cover"
+                        className={styles.albumImg}
+                      />
+                      <div className={styles.failedMsg}>Loading...</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* Recommend */}
+              <div className={styles.listSection}>
+                <h2 className={styles.listTitle}>Recommend</h2>
+                <div className={styles.albumRow}>
+                  {Array.from({ length: 3 }).map((_, idx) => (
+                    <div key={idx} className={styles.albumCard}>
+                      <img
+                        src={albumCover}
+                        alt="cover"
+                        className={styles.albumImg}
+                      />
+                      <div className={styles.failedMsg}>Loading...</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* Generated */}
+              <div className={styles.listSection}>
+                <h2 className={styles.listTitle}>Generated</h2>
+                <div className={styles.albumRow}>
+                  {Array.from({ length: 3 }).map((_, idx) => (
+                    <div key={idx} className={styles.albumCard}>
+                      <img
+                        src={albumCover}
+                        alt="cover"
+                        className={styles.albumImg}
+                      />
+                      <div className={styles.failedMsg}>Loading...</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           ) : (
             <div>
               {/* Ongoing */}

@@ -28,6 +28,25 @@
   overflow-y: auto;
   padding: 0 8px 8px 8px;
 }
+
+/* 커스텀 스크롤바 */
+.scrollArea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollArea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollArea::-webkit-scrollbar-thumb {
+  background: #e91e63;
+  border-radius: 3px;
+  opacity: 0.7;
+}
+
+.scrollArea::-webkit-scrollbar-thumb:hover {
+  background: #ad1457;
+}
 .logList {
   list-style: none;
   padding: 0;
@@ -56,4 +75,43 @@
   color: #bbb;
   text-align: center;
   margin-top: 16px;
+}
+.progressContainer {
+  margin-bottom: 8px;
+  padding: 0 8px;
+}
+
+.progressBar {
+  width: 100%;
+  height: 16px;
+  background-color: #f8bbd9;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #e91e63;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.progressFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(to right, #ad1457, #e91e63);
+  border-radius: 6px;
+  transition: width 0.3s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.progressText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  z-index: 1;
 }

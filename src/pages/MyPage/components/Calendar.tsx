@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styles from "./Calendar.module.css";
+import { getAuthHeadersForGet, getApiBaseUrl } from "../../../utils/apiUtils";
 
 const getDaysInMonth = (year: number, month: number) => {
   return new Date(year, month + 1, 0).getDate();
@@ -55,10 +56,14 @@ const Calendar: React.FC = () => {
       const dateStr = `${year}-${(month + 1).toString().padStart(2, "0")}-${day
         .toString()
         .padStart(2, "0")}`;
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
+      const baseUrl = getApiBaseUrl();
       try {
         const res = await fetch(
-          `${baseUrl}/api/practice/history?user_id=1&date=${dateStr}`
+          `${baseUrl}/api/practice/history?date=${dateStr}`,
+          {
+            method: "GET",
+            headers: getAuthHeadersForGet(),
+          }
         );
         if (!res.ok) throw new Error("Unable to fetch data.");
         const data: PracticeData = await res.json();

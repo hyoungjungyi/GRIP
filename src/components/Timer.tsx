@@ -1,5 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useTimer } from "../context/TimerContext";
+import { useLocation } from "react-router-dom";
 
 const formatTime = (seconds: number) => {
   const m = Math.floor(seconds / 60);
@@ -16,6 +17,21 @@ const Timer: React.FC = () => {
     pauseTimer,
     resetTimer,
   } = useTimer();
+
+  const location = useLocation();
+
+  // 경로 기반으로 타이머를 시각적으로 숨길지 결정
+  const isHidden =
+    location.pathname.startsWith("/mypage") ||
+    location.pathname.startsWith("/metronome-practice");
+
+  // 경로가 특정 페이지일 때 자동으로 타이머를 일시정지
+  useEffect(() => {
+    if (isHidden && isRunning) {
+      pauseTimer();
+    }
+    // eslint-disable-next-line
+  }, [isHidden]);
 
   // Drag state
   const [position, setPosition] = useState({ x: 24, y: 24 });
@@ -49,7 +65,7 @@ const Timer: React.FC = () => {
     document.body.style.userSelect = "";
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (dragging) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
@@ -63,6 +79,7 @@ const Timer: React.FC = () => {
     };
   }, [dragging]);
 
+  // 시각적으로만 숨김 처리
   return (
     <div
       style={{
@@ -80,8 +97,10 @@ const Timer: React.FC = () => {
         cursor: dragging ? "grabbing" : "grab",
         userSelect: "none",
         transition: "padding 0.2s",
+        display: isHidden ? "none" : "block",
       }}
       onMouseDown={handleMouseDown}
+      aria-hidden={isHidden}
     >
       <div
         style={{
@@ -115,9 +134,9 @@ const Timer: React.FC = () => {
           }}
         >
           {minimized ? (
-            <span style={{ fontSize: 18 }}>&#x25B6;</span> // ▶ (expand)
+            <span style={{ fontSize: 18 }}>&#x25B6;</span>
           ) : (
-            <span style={{ fontSize: 18 }}>&#x25BC;</span> // ▼ (collapse)
+            <span style={{ fontSize: 18 }}>&#x25BC;</span>
           )}
         </button>
       </div>
@@ -154,5 +173,4 @@ const Timer: React.FC = () => {
     </div>
   );
 };
-
 export default Timer;

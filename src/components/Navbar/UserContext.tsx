@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { getApiBaseUrl } from '../../utils/apiUtils';
 
 //로그인 후 구현
 type User = {
@@ -25,7 +26,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!token) return;
 
     try {
-      const res = await axios.get("http://localhost:5500/api/auth/profile", {
+      const baseUrl = getApiBaseUrl();
+      const res = await axios.get(`${baseUrl}/api/auth/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

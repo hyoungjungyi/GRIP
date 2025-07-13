@@ -1,6 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 
-type TimerContextType = {
+export interface TimerContextType {
   goalMinutes: number;
   elapsedSeconds: number;
   isRunning: boolean;
@@ -8,7 +14,8 @@ type TimerContextType = {
   startTimer: () => void;
   pauseTimer: () => void;
   resetTimer: () => void;
-};
+  setElapsedSeconds: React.Dispatch<React.SetStateAction<number>>;
+}
 
 const TimerContext = createContext<TimerContextType | undefined>(undefined);
 
@@ -18,7 +25,9 @@ export const useTimer = () => {
   return ctx;
 };
 
-export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [goalMinutes, setGoalMinutesState] = useState<number>(() => {
     const stored = localStorage.getItem("practiceGoalMinutes");
     return stored ? Number(stored) : 30;
@@ -72,7 +81,6 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const setGoalMinutes = (minutes: number) => {
     setGoalMinutesState(minutes);
-    setElapsedSeconds(0);
     setIsRunning(false);
   };
 
@@ -93,6 +101,7 @@ export const TimerProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         startTimer,
         pauseTimer,
         resetTimer,
+        setElapsedSeconds,
       }}
     >
       {children}

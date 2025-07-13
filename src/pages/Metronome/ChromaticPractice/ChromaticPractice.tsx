@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./ChromaticPractice.module.css";
 
 interface ChromaticPracticeProps {
@@ -23,6 +23,18 @@ const ChromaticPractice: React.FC<ChromaticPracticeProps> = ({
   setMaxBpm,
 }) => {
   const [wasPaused, setWasPaused] = useState(false);
+
+  // Warn on tab close if Chromatic Practice tracking is running
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isTracking) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isTracking]);
 
   // 버튼 텍스트 결정
   let buttonText = "Start Chromatic Practice";
@@ -55,11 +67,8 @@ const ChromaticPractice: React.FC<ChromaticPracticeProps> = ({
       <div>
         <div style={{ margin: "4px 0", fontSize: "14px", fontWeight: "bold" }}>
           Practice time: {practiceDuration} seconds
-        </div>{" "}
-        <div style={{ margin: "4px 0", fontSize: "10px" }}>
-          Caution! If you leave the screen during practice time tracking, the
-          timer will reset.
         </div>
+        {/* Remove all warning text here */}
       </div>
       <div className={styles.inputGroup}>
         <label htmlFor="pattern">Pattern:</label>
@@ -78,10 +87,12 @@ const ChromaticPractice: React.FC<ChromaticPracticeProps> = ({
           inputMode="numeric"
           pattern="[0-9]*"
           id="maxBpm"
-          value={maxBpm}
+          value={maxBpm === 0 ? "" : maxBpm}
           onChange={(e) => {
             const val = e.target.value;
-            if (/^\d*$/.test(val)) {
+            if (val === "") {
+              setMaxBpm(0);
+            } else if (/^\d+$/.test(val)) {
               setMaxBpm(Number(val));
             }
           }}

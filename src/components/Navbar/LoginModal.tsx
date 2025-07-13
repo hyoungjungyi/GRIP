@@ -42,12 +42,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             localStorage.setItem("accessToken", accessToken);
             alert("로그인 성공!");
 
-            const profileRes = await axios.get(
-              "http://localhost:5500/api/auth/profile",
-              {
-                headers: { Authorization: `Bearer ${accessToken}` },
-              }
-            );
+            const profileRes = await axios.get(`${baseURL}/api/auth/profile`, {
+              headers: { Authorization: `Bearer ${accessToken}` },
+            });
 
             setUser(profileRes.data);
 
