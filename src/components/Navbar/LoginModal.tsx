@@ -43,7 +43,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             alert("로그인 성공!");
 
             const profileRes = await axios.get(
-              "http://localhost:5500/api/auth/profile",
+              `${baseURL}/api/auth/profile`,
               {
                 headers: { Authorization: `Bearer ${accessToken}` },
               }
