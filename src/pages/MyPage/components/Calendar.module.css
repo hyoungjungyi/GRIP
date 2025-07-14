@@ -39,6 +39,63 @@ th {
   border-radius: 6px;
   padding: 6px 0;
   font-size: 15px;
+  position: relative;
+  height: 40px;
+}
+
+.dayContent {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.dayNumber {
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 2;
+}
+
+.stamp {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.successStamp {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #ff4757, #ff3838);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4);
+  border: 2px solid #ff1744;
+}
+
+.failureStamp {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  background: linear-gradient(45deg, #636e72, #2d3436);
+  color: #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(45, 52, 54, 0.4);
+  border: 1px solid #2d3436;
+  transform: rotate(-5deg);
 }
 .empty {
   background: transparent;

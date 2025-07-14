@@ -86,6 +86,19 @@ const MetronomePractice: React.FC = () => {
     try {
       const presetData = await getLastChromaticPreset();
       if (presetData && presetData.preset && presetData.bpm) {
+        // 같은 pattern이 이미 있는지 확인
+        const existingLog = practiceLogs.find(
+          (log) => log.pattern === presetData.preset
+        );
+
+        if (existingLog) {
+          console.log(
+            "ℹ️ Preset pattern already exists in logs:",
+            presetData.preset
+          );
+          return; // 이미 존재하면 추가하지 않음
+        }
+
         // 프리셋을 0초 로그로 추가
         const presetLog: PracticeLogEntry = {
           pattern: presetData.preset,
@@ -217,24 +230,18 @@ const MetronomePractice: React.FC = () => {
 
     console.log("🗑️ 삭제 대상 로그:", targetLog);
 
-    // 3. 서버에서 삭제 (ID가 있는 경우만)
-    if (targetLog.id) {
-      try {
-        await deleteChromaticPracticeFromServer(targetLog.id);
-        console.log("✅ Successfully deleted practice record from server");
-      } catch (error) {
-        console.error("❌ Failed to delete practice record from server:", error);
-        // TODO: 에러 처리 - 사용자에게 알림 표시
-        return; // 서버 삭제 실패 시 로컬 삭제도 하지 않음
-      }
-    } else {
-      // 서버에 저장되지 않은 로컬 기록의 경우
-      console.warn("⚠️ No server ID found for this practice record, deleting locally only");
+    // 3. 서버에서 삭제 (무조건 시도)
+    try {
+      // 서버에 삭제 요청 (practiceId는 임시로 index 사용)
+      await deleteChromaticPracticeFromServer(index);
+      console.log("✅ Successfully deleted practice record from server");
+    } catch (error) {
+      console.error("❌ Failed to delete practice record from server:", error);
+      // 서버 삭제 실패해도 로컬 삭제는 진행
     }
 
     // 4. 로컬에서 삭제 (전체 로그에서 해당 로그 제거)
     const updatedLogs = practiceLogs.filter((log) => log !== targetLog);
-
     setPracticeLogs(updatedLogs);
     localStorage.setItem(LOG_STORAGE_KEY, JSON.stringify(updatedLogs));
   };

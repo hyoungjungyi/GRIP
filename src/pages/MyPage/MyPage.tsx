@@ -105,6 +105,8 @@ const MyPage = () => {
     };
     localStorage.setItem("practiceGoalSettings", JSON.stringify(goalSettings));
 
+    // TODO: 서버에 목표 시간 저장 로직 추가
+
     alert(
       `Goal Saved!\n` +
         `Total Practice Time: ${h}h ${m}m\n` +

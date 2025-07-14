@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Calendar.module.css";
 import { getAuthHeadersForGet, getApiBaseUrl } from "../../../utils/apiUtils";
+import { getMonthlyAchievementStatus, type AchievementStatus } from "./calendarApi";
 
 const getDaysInMonth = (year: number, month: number) => {
   return new Date(year, month + 1, 0).getDate();
@@ -26,9 +27,25 @@ const Calendar: React.FC = () => {
   const [popupData, setPopupData] = useState<PracticeData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [monthlyStatus, setMonthlyStatus] = useState<AchievementStatus[]>([]);
 
   const daysInMonth = getDaysInMonth(year, month);
   const firstDay = new Date(year, month, 1).getDay(); // 0: Sunday
+
+  // 월별 달성 상태 불러오기
+  useEffect(() => {
+    const fetchMonthlyStatus = async () => {
+      try {
+        const statusData = await getMonthlyAchievementStatus(year, month);
+        setMonthlyStatus(statusData.daily_status || []);
+      } catch (error) {
+        console.error("Failed to fetch monthly status:", error);
+        setMonthlyStatus([]);
+      }
+    };
+
+    fetchMonthlyStatus();
+  }, [year, month]);
 
   const handlePrevMonth = () => {
     if (month === 0) {
@@ -126,16 +143,34 @@ const Calendar: React.FC = () => {
         <tbody>
           {weeks.map((week, i) => (
             <tr key={i}>
-              {week.map((d, j) => (
-                <td
-                  key={j}
-                  className={d ? styles.day : styles.empty}
-                  onClick={() => handleDayClick(d)}
-                  style={{ cursor: d ? "pointer" : "default" }}
-                >
-                  {d ? d : ""}
-                </td>
-              ))}
+              {week.map((d, j) => {
+                const dayStatus = d > 0 ? monthlyStatus[d - 1] : null;
+                return (
+                  <td
+                    key={j}
+                    className={d ? styles.day : styles.empty}
+                    onClick={() => handleDayClick(d)}
+                    style={{ cursor: d ? "pointer" : "default" }}
+                  >
+                    {d ? (
+                      <div className={styles.dayContent}>
+                        <span className={styles.dayNumber}>{d}</span>
+                        {dayStatus && (
+                          <div className={styles.stamp}>
+                            {dayStatus === 'success' ? (
+                              <div className={styles.successStamp}>✓</div>
+                            ) : dayStatus === 'failure' ? (
+                              <div className={styles.failureStamp}>✗</div>
+                            ) : null}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      ""
+                    )}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>

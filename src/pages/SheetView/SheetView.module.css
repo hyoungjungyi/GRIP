@@ -123,7 +123,7 @@
 }
 
 .sheetImage {
-  width: 80vw;  /* 화면 너비의 80% */
+  width: 80vw; /* 화면 너비의 80% */
   height: 80vh; /* 화면 높이의 80% */
   object-fit: contain; /* 비율 유지하면서 크기에 맞춤 */
   border-radius: 8px;
@@ -190,4 +190,14 @@
 
 .favoriteActive:hover {
   background: #ffb300;
+}
+
+.resetButton {
+  background: #4caf50;
+  color: white;
+}
+
+.resetButton:hover {
+  background: #45a049;
+  transform: scale(1.05);
 }

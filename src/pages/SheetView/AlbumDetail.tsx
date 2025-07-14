@@ -9,6 +9,13 @@ const AlbumDetail: React.FC = () => {
   const [sheetImageUrl, setSheetImageUrl] = useState<string>("");
   const [imageError, setImageError] = useState(false);
 
+  // 이미지 확대/축소 및 이동 상태
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [lastPosition, setLastPosition] = useState({ x: 0, y: 0 });
+
   // TODO: 실제 API로 songId에 해당하는 악보/정보 불러오기
   useEffect(() => {
     // 악보 타입에 따라 이미지 경로 설정
@@ -50,16 +57,76 @@ const AlbumDetail: React.FC = () => {
     // useEffect가 sheetType 변경을 감지해서 자동으로 이미지 업데이트
   };
 
+  // 확대/축소 핸들러 (마우스 휠)
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY * -0.01;
+    const newScale = Math.min(Math.max(0.5, scale + delta), 3); // 0.5배 ~ 3배 제한
+    setScale(newScale);
+  };
+
+  // 드래그 시작
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setDragStart({ x: e.clientX, y: e.clientY });
+    setLastPosition(position);
+  };
+
+  // 드래그 중
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+
+    const deltaX = e.clientX - dragStart.x;
+    const deltaY = e.clientY - dragStart.y;
+
+    setPosition({
+      x: lastPosition.x + deltaX,
+      y: lastPosition.y + deltaY,
+    });
+  };
+
+  // 드래그 종료
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // 이미지 리셋 (원래 크기와 위치로)
+  const handleResetImage = () => {
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
+  };
+
   return (
     <div className={styles.albumDetailContainer}>
       {/* 악보 이미지 */}
-      <div className={styles.sheetImageContainer}>
+      <div
+        className={styles.sheetImageContainer}
+        onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp} // 마우스가 컨테이너를 벗어나면 드래그 종료
+        style={{
+          cursor: isDragging ? "grabbing" : "grab",
+          overflow: "hidden",
+          userSelect: "none", // 텍스트 선택 방지
+        }}
+      >
         {sheetImageUrl && !imageError ? (
           <img
             src={sheetImageUrl}
             alt={`Song ${songId} ${sheetType} sheet music`}
             className={styles.sheetImage}
             onError={handleImageError}
+            style={{
+              transform: `scale(${scale}) translate(${position.x / scale}px, ${
+                position.y / scale
+              }px)`,
+              transformOrigin: "center center",
+              transition: isDragging ? "none" : "transform 0.1s ease-out",
+              pointerEvents: "none", // 이미지 자체의 드래그 방지
+            }}
+            draggable={false} // HTML5 드래그 방지
           />
         ) : imageError ? (
           <div className={styles.loadingPlaceholder}>
@@ -74,6 +141,15 @@ const AlbumDetail: React.FC = () => {
 
       {/* 우측 하단 버튼들 */}
       <div className={styles.controlButtons}>
+        {/* 이미지 리셋 버튼 */}
+        <button
+          className={`${styles.controlButton} ${styles.resetButton}`}
+          onClick={handleResetImage}
+          title="이미지 원래 크기로 리셋"
+        >
+          ⌂
+        </button>
+
         {/* 타브/계이름 전환 버튼 */}
         <button
           className={`${styles.controlButton} ${styles.sheetTypeButton}`}

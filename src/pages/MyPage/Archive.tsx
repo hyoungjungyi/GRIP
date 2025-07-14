@@ -63,10 +63,6 @@ const Archive: React.FC = () => {
       </button>
       <div className={styles.archiveMainContent}>
         <h2>Archive</h2>
-        <p>
-          This is the archive page. Here you can view all uploaded videos and
-          recordings.
-        </p>
         {error ? (
           <div style={{ color: "#f55" }}>{error}</div>
         ) : (

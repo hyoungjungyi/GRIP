@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAuthHeadersForGet, getApiBaseUrl } from "../../utils/apiUtils";
+import { getAllSongLists, generateTabFromAudio } from "./sheetViewApi";
 import styles from "./SheetView.module.css";
 
 interface OngoingSong {
@@ -34,18 +34,19 @@ const SheetView: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const baseUrl = getApiBaseUrl();
-    fetch(`${baseUrl}/api/songs/all-lists`, {
-      method: "GET",
-      headers: getAuthHeadersForGet(),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("API Error");
-        return res.json();
-      })
-      .then((data) => setLists(data))
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
+    const fetchSongLists = async () => {
+      try {
+        const data = await getAllSongLists();
+        setLists(data);
+      } catch (error) {
+        console.error("Error fetching song lists:", error);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSongLists();
   }, []);
 
   const handleGenerate = async () => {
@@ -53,24 +54,16 @@ const SheetView: React.FC = () => {
       alert("링크를 입력하세요.");
       return;
     }
-    const baseUrl = getApiBaseUrl();
+
     try {
-      const res = await fetch(`${baseUrl}/api/tab-generator`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...getAuthHeadersForGet(),
-        },
-        body: JSON.stringify({ audio_url: link }),
-      });
-      if (!res.ok) throw new Error("API Error");
-      const data = await res.json();
+      const data = await generateTabFromAudio(link);
       alert(
         `생성 완료! song_id: ${data.song_id}\nTab 이미지: ${data.tab_image_url}`
       );
       // 필요시: 생성된 song_id로 이동하거나, UI 갱신 등 추가 작업
-    } catch (err) {
-      alert("생성 실패: " + err);
+    } catch (error) {
+      console.error("Tab generation failed:", error);
+      alert("생성 실패: " + error);
     }
   };
 
