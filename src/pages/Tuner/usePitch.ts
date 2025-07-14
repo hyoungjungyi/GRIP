@@ -1,105 +1,179 @@
 import { useEffect, useRef, useState } from "react";
-
-function autoCorrelate(
-  buffer: Float32Array,
-  sampleRate: number
-): number | null {
-  const SIZE = buffer.length;
-  const MAX_SAMPLES = Math.floor(SIZE / 2);
-  let bestOffset = -1;
-  let bestCorrelation = 0;
-  let rms = 0;
-
-  for (let i = 0; i < SIZE; i++) {
-    rms += buffer[i] * buffer[i];
-  }
-  rms = Math.sqrt(rms / SIZE);
-  if (rms < 0.01) return null;
-
-  let lastCorrelation = 1;
-  for (let offset = 1; offset < MAX_SAMPLES; offset++) {
-    let correlation = 0;
-
-    for (let i = 0; i < MAX_SAMPLES; i++) {
-      correlation += Math.abs(buffer[i] - buffer[i + offset]);
-    }
-    correlation = 1 - correlation / MAX_SAMPLES;
-
-    if (correlation > 0.9 && correlation > lastCorrelation) {
-      bestCorrelation = correlation;
-      bestOffset = offset;
-    }
-    lastCorrelation = correlation;
-  }
-
-  if (bestCorrelation > 0.01) {
-    return sampleRate / bestOffset;
-  }
-
-  return null;
-}
+import { PitchDetector } from "pitchy";
 
 export function usePitch() {
   const [pitch, setPitch] = useState<number | null>(null);
+  const [inputLevel, setInputLevel] = useState<number>(0);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
-  const buffer = useRef<Float32Array>(new Float32Array(2048));
   const streamRef = useRef<MediaStream | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Pitchy 감지기
+  const pitchDetectorRef = useRef<PitchDetector<Float32Array> | null>(null);
+  const bufferRef = useRef<Float32Array | null>(null);
 
   useEffect(() => {
     let isMounted = true;
-    console.log("[usePitch] mount");
+    console.log("[🎵 Pitchy] Initializing...");
 
     async function init() {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      streamRef.current = stream;
-      console.log("[usePitch] mic started");
-      const audioContext = new AudioContext();
-      audioContextRef.current = audioContext;
+      try {
+        // 마이크 권한 요청
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false,
+            sampleRate: 44100,
+          },
+        });
+        streamRef.current = stream;
 
-      const analyser = audioContext.createAnalyser();
-      analyser.fftSize = 2048;
-      analyserRef.current = analyser;
+        const audioContext = new AudioContext();
+        audioContextRef.current = audioContext;
 
-      const source = audioContext.createMediaStreamSource(stream);
-      source.connect(analyser);
-      sourceRef.current = source;
+        const analyser = audioContext.createAnalyser();
+        analyser.fftSize = 2048; // Pitchy에 최적화된 크기
+        analyser.smoothingTimeConstant = 0.1; // 빠른 반응
+        analyserRef.current = analyser;
 
-      const update = () => {
-        if (!isMounted) return;
+        const source = audioContext.createMediaStreamSource(stream);
+        source.connect(analyser);
+        sourceRef.current = source;
 
-        analyser.getFloatTimeDomainData(buffer.current);
-        const detectedPitch = autoCorrelate(
-          buffer.current,
-          audioContext.sampleRate
-        );
-        if (detectedPitch && detectedPitch >= 50 && detectedPitch <= 1000) {
-          const jitteredPitch = detectedPitch + Math.random() * 0.00001;
-          setPitch(jitteredPitch);
+        // Pitchy 감지기 초기화
+        const bufferSize = analyser.fftSize;
+        bufferRef.current = new Float32Array(bufferSize);
+        pitchDetectorRef.current = PitchDetector.forFloat32Array(bufferSize);
+
+        console.log("[✅ Pitchy] Initialized successfully", {
+          bufferSize,
+          sampleRate: audioContext.sampleRate,
+        });
+
+        const update = () => {
+          if (!isMounted) return;
+
+          analyser.getFloatTimeDomainData(bufferRef.current!);
+
+          // 입력 레벨 계산
+          const maxAmplitude = Math.max(...Array.from(bufferRef.current!).map(Math.abs));
+          setInputLevel(Math.min(maxAmplitude * 8, 1));
+
+          // Pitchy로 피치 감지
+          try {
+            const [frequency, clarity] = pitchDetectorRef.current!.findPitch(
+              bufferRef.current!, 
+              audioContext.sampleRate
+            );
+
+            // 디버깅: 모든 감지 결과 로그 (가끔)
+            if (Math.random() < 0.05) {
+              console.log("[🔍 Pitchy Raw]", {
+                frequency: frequency.toFixed(2),
+                clarity: clarity.toFixed(3),
+                inputLevel: maxAmplitude.toFixed(4),
+                inRange: frequency >= 60 && frequency <= 400,
+                clarityThreshold: 0.5
+              });
+            }
+
+            // 조건 완화: clarity > 0.5, 범위 확장
+            if (clarity > 0.5 && frequency >= 60 && frequency <= 400 && maxAmplitude > 0.01) {
+              setPitch(frequency);
+              
+              // 성공적인 감지 로그
+              if (Math.random() < 0.02) {
+                console.log("[🎯 Pitchy Detection SUCCESS]", {
+                  frequency: frequency.toFixed(2),
+                  clarity: clarity.toFixed(3),
+                  inputLevel: maxAmplitude.toFixed(4)
+                });
+              }
+            } else {
+              // 신뢰도가 낮거나 범위를 벗어나면 null
+              if (pitch !== null) {
+                setPitch(null);
+                // 실패 이유 로그
+                if (Math.random() < 0.01) {
+                  console.log("[❌ Pitchy Detection FAILED]", {
+                    frequency: frequency.toFixed(2),
+                    clarity: clarity.toFixed(3),
+                    inputLevel: maxAmplitude.toFixed(4),
+                    reasons: {
+                      lowClarity: clarity <= 0.5,
+                      outOfRange: frequency < 60 || frequency > 400,
+                      lowInput: maxAmplitude <= 0.01
+                    }
+                  });
+                }
+              }
+            }
+          } catch (err) {
+            // Pitchy 오류 처리
+            if (Math.random() < 0.001) {
+              console.warn("[⚠️ Pitchy Error]", err);
+            }
+          }
+
+          requestAnimationFrame(update);
+        };
+        
+        update();
+      } catch (err) {
+        console.error("[❌ usePitch] Failed to initialize:", err);
+        
+        if (err instanceof DOMException) {
+          switch (err.name) {
+            case "NotAllowedError":
+              setError("마이크 권한이 거부되었습니다. 브라우저 설정에서 마이크 권한을 허용해주세요.");
+              break;
+            case "NotFoundError":
+              setError("마이크를 찾을 수 없습니다. 마이크가 연결되어 있는지 확인해주세요.");
+              break;
+            case "NotReadableError":
+              setError("마이크에 접근할 수 없습니다. 다른 앱에서 사용 중일 수 있습니다.");
+              break;
+            default:
+              setError(`마이크 오류: ${err.message}`);
+          }
         } else {
-          const placeholderPitch = 0;
-          const jitterPlaceholder = placeholderPitch + Math.random() * 0.00001;
-          setPitch(jitterPlaceholder);
+          setError(err instanceof Error ? err.message : "알 수 없는 오류");
         }
-        requestAnimationFrame(update);
-      };
-      update();
+      }
     }
 
     init();
 
     return () => {
       isMounted = false;
-      audioContextRef.current?.close();
+      console.log("[🧹 Cleanup] Starting cleanup...");
+
+      // 상태 초기화
+      setPitch(null);
+      setInputLevel(0);
+
+      // 오디오 컨텍스트 정리
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+
+      // 스트림 정리
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
         streamRef.current = null;
-        console.log("[usePitch] mic stopped");
       }
-      console.log("[usePitch] unmount");
+
+      // Pitchy 관련 정리
+      pitchDetectorRef.current = null;
+      bufferRef.current = null;
+
+      console.log("[✅ Cleanup] Complete");
     };
   }, []);
 
-  return pitch;
+  return { pitch, error, inputLevel };
 }
