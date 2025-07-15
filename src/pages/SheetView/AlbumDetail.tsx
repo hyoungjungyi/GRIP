@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { getSheetImage, addToSavedSongs, removeFromSavedSongs, checkSavedSongStatus } from "./sheetViewApi";
+import { useParams, useNavigate } from "react-router-dom";
+import { getSheetImage, addToSavedSongs, removeFromSavedSongs, checkSavedSongStatus, deleteSong } from "./sheetViewApi";
 import { useToast } from "../../hooks/useToast";
 import { useUser } from "../../components/Navbar/UserContext";
 import Toast from "../../components/Toast";
@@ -15,6 +15,7 @@ declare global {
 
 const AlbumDetail: React.FC = () => {
   const { songId } = useParams<{ songId: string }>();
+  const navigate = useNavigate();
   const { toasts, removeToast, showSuccess, showError } = useToast();
   const { user } = useUser();
   const [isFavorite, setIsFavorite] = useState(false);
@@ -23,6 +24,7 @@ const AlbumDetail: React.FC = () => {
   const [imageError, setImageError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [favoriteLoading, setFavoriteLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [songData, setSongData] = useState<any>(null);
 
   // 이미지 확대/축소 및 이동 상태
@@ -196,6 +198,58 @@ const AlbumDetail: React.FC = () => {
     // useEffect가 sheetType 변경을 감지해서 자동으로 이미지 업데이트
   };
 
+  // 곡 삭제 핸들러
+  const handleDeleteSong = async () => {
+    if (!songId || isDeleting) return;
+
+    // 로그인 확인
+    const token = localStorage.getItem("accessToken") || localStorage.getItem("jwt_token");
+    if (!user || !token) {
+      showError("로그인이 필요합니다.");
+      return;
+    }
+
+    // 삭제 확인
+    const confirmDelete = window.confirm(
+      `정말로 이 곡을 삭제하시겠습니까?\n\n곡명: ${songData?.title || 'Unknown'}\n아티스트: ${songData?.artist || 'Unknown'}\n\n⚠️ 삭제된 데이터는 복구할 수 없습니다.`
+    );
+
+    if (!confirmDelete) return;
+
+    setIsDeleting(true);
+    
+    try {
+      console.log(`[🗑️ AlbumDetail] 곡 삭제 요청 - songId: ${songId}`);
+      const result = await deleteSong(parseInt(songId));
+      console.log(`[🗑️ AlbumDetail] 곡 삭제 API 응답:`, result);
+      
+      if (result?.success) {
+        showSuccess(`곡이 성공적으로 삭제되었습니다.`);
+        console.log(`[✅ AlbumDetail] 곡 삭제 완료 - songId: ${songId}`);
+        
+        // SheetView 페이지로 이동
+        setTimeout(() => {
+          navigate('/sheet-view');
+        }, 1500);
+      } else {
+        throw new Error(result?.message || '곡 삭제에 실패했습니다.');
+      }
+    } catch (error: any) {
+      console.error(`[❌ AlbumDetail] 곡 삭제 실패:`, error);
+      
+      // 에러 메시지 처리
+      if (error.message?.includes('404')) {
+        showError('해당 곡을 찾을 수 없습니다.');
+      } else if (error.message?.includes('401') || error.message?.includes('403')) {
+        showError('삭제 권한이 없습니다. 다시 로그인해주세요.');
+      } else {
+        showError('곡 삭제 중 오류가 발생했습니다.');
+      }
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   // 확대/축소 핸들러 (마우스 휠)
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
@@ -339,6 +393,24 @@ const AlbumDetail: React.FC = () => {
           }
         >
           {favoriteLoading ? "⏳" : isFavorite ? "★" : "☆"}
+        </button>
+
+        {/* 삭제 버튼 */}
+        <button
+          className={`${styles.controlButton} ${styles.deleteButton} ${
+            isDeleting ? styles.loading : ""
+          } ${!user ? styles.disabled : ""}`}
+          onClick={handleDeleteSong}
+          disabled={isDeleting || !user}
+          title={
+            !user
+              ? "로그인이 필요합니다"
+              : isDeleting 
+                ? "삭제 중..." 
+                : "곡 삭제"
+          }
+        >
+          {isDeleting ? "⏳" : "🗑️"}
         </button>
       </div>
     </div>

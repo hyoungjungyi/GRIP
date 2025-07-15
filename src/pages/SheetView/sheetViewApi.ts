@@ -294,3 +294,51 @@ export const getSavedSongs = async () => {
     throw error;
   }
 };
+
+// 곡 삭제 API
+export const deleteSong = async (songId: number) => {
+  try {
+    console.log("🗑️ Deleting song:", songId);
+    const response = await fetch(`${API_BASE_URL}/api/songs/${songId}`, {
+      method: "DELETE",
+      headers: getAuthHeadersForGet(),
+    });
+
+    console.log("🔍 곡 삭제 응답 상태:", response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(
+        "❌ Delete song HTTP error:",
+        response.status,
+        errorText
+      );
+
+      if (response.status === 404) {
+        throw new Error("해당 곡을 찾을 수 없습니다.");
+      }
+
+      throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+    }
+
+    const result = await response.json();
+    console.log(
+      "✅ Delete song response:",
+      JSON.stringify(result, null, 2)
+    );
+
+    // 서버 응답 형태: { success: true, message: string, data: {...} }
+    if (result?.success === true) {
+      return { success: true, ...result };
+    } else {
+      console.error(
+        "❌ Delete song API returned success=false:",
+        result
+      );
+      throw new Error(result?.message || "곡 삭제에 실패했습니다.");
+    }
+  } catch (error) {
+    console.error("❌ Failed to delete song:", error);
+    throw error;
+  }
+};

@@ -36,6 +36,7 @@ const SheetView: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [showUploadPopup, setShowUploadPopup] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false); // Generate 로딩 상태 추가
   const [uploadData, setUploadData] = useState({
     title: "",
     artist: "",
@@ -45,6 +46,23 @@ const SheetView: React.FC = () => {
   });
   const [isUploading, setIsUploading] = useState(false);
   const navigate = useNavigate();
+
+  // 곡 리스트를 다시 불러오는 함수
+  const refreshSongLists = async () => {
+    try {
+      console.log("[🔄 SheetView] Refreshing song lists...");
+      const data = await getAllSongLists();
+      console.log("[📋 SheetView] Refreshed API Response:", data);
+      console.log("[📋 SheetView] Refreshed Ongoing songs:", data?.ongoing);
+      console.log("[📋 SheetView] Refreshed Recommend songs:", data?.recommend);
+      console.log("[📋 SheetView] Refreshed Generated songs:", data?.generated);
+      setLists(data);
+      setError(false); // 에러 상태 초기화
+    } catch (error) {
+      console.error("Error refreshing song lists:", error);
+      setError(true);
+    }
+  };
 
   useEffect(() => {
     const fetchSongLists = async () => {
@@ -72,15 +90,41 @@ const SheetView: React.FC = () => {
       return;
     }
 
+    if (isGenerating) {
+      return; // 이미 생성 중이면 중복 실행 방지
+    }
+
+    setIsGenerating(true);
+    console.log("🎵 YouTube → 기타 TAB 생성 시작:", link);
+
     try {
       const data = await generateTabFromAudio(link);
+      console.log("✅ TAB 생성 완료:", data);
+      
+      // 성공 메시지 표시
       alert(
-        `생성 완료! song_id: ${data.song_id}\nTab 이미지: ${data.tab_image_url}`
+        `🎸 기타 TAB 생성 완료!\n` +
+        `곡명: ${data.song_info?.title || 'Unknown'}\n` +
+        `아티스트: ${data.song_info?.artist || 'Unknown'}\n` +
+        `Song ID: ${data.song_id || 'N/A'}`
       );
-      // 필요시: 생성된 song_id로 이동하거나, UI 갱신 등 추가 작업
-    } catch (error) {
-      console.error("Tab generation failed:", error);
-      alert("생성 실패: " + error);
+
+      // 입력 필드 초기화
+      setLink("");
+
+      // 화면 재구성 - 곡 리스트 다시 불러오기
+      console.log("🔄 화면 재구성 중...");
+      await refreshSongLists();
+      
+    } catch (error: any) {
+      console.error("❌ TAB 생성 실패:", error);
+      alert(
+        `❌ 기타 TAB 생성 실패\n` +
+        `오류: ${error.message || '알 수 없는 오류'}\n` +
+        `YouTube 링크를 확인해주세요.`
+      );
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -158,12 +202,14 @@ const SheetView: React.FC = () => {
 
   // 앨범 커버 이미지 URL 가져오기 함수
   const getAlbumCoverUrl = (song: any) => {
-    if (song.coverUrl) {
+    // coverUrl이 존재하고 유효한 문자열인지 확인
+    if (song?.coverUrl && typeof song.coverUrl === 'string' && song.coverUrl.trim() !== '') {
       console.log(`[🖼️ SheetView] Found cover image: coverUrl = ${song.coverUrl}`);
       return song.coverUrl;
     }
     
-    console.log(`[🖼️ SheetView] No cover image found for song:`, song);
+    // coverUrl이 null, undefined, 빈 문자열인 경우 기본 이미지 사용
+    console.log(`[🖼️ SheetView] No valid cover image found for song (coverUrl: ${song?.coverUrl}), using default:`, song);
     return albumCover; // 기본 이미지 반환
   };
 
@@ -184,12 +230,33 @@ const SheetView: React.FC = () => {
               onChange={(e) => setLink(e.target.value)}
               placeholder="Paste a link here..."
               className={styles.input}
+              disabled={isGenerating}
+              style={{
+                opacity: isGenerating ? 0.7 : 1,
+              }}
             />
-            <button onClick={handleGenerate} className={styles.glassButton}>
+            <button 
+              onClick={handleGenerate} 
+              className={styles.glassButton}
+              disabled={isGenerating}
+              style={{
+                opacity: isGenerating ? 0.7 : 1,
+                cursor: isGenerating ? 'not-allowed' : 'pointer',
+              }}
+            >
+              {isGenerating && <div className={styles.spinner}></div>}
               <img src="../src/assets/ai.png" alt="AI" className={styles.aiBadgeImage} />
-              <span>GENERATE</span>
+              <span>{isGenerating ? "GENERATING..." : "GENERATE"}</span>
             </button>
-            <button onClick={handleUploadClick} className={styles.button}>
+            <button 
+              onClick={handleUploadClick} 
+              className={styles.button}
+              disabled={isGenerating}
+              style={{
+                opacity: isGenerating ? 0.7 : 1,
+                cursor: isGenerating ? 'not-allowed' : 'pointer',
+              }}
+            >
               UPLOAD SHEET
             </button>
           </div>
@@ -284,12 +351,16 @@ const SheetView: React.FC = () => {
                           src={getAlbumCoverUrl(song)}
                           alt="cover"
                           className={styles.albumImg}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            if (target.src !== albumCover) {
+                              console.log(`[🖼️ SheetView] Image load failed, using default: ${target.src}`);
+                              target.src = albumCover;
+                            }
+                          }}
                         />
-                        <div className={styles.albumTitle}>{song.title}</div>
-                        <div className={styles.albumArtist}>{song.artist}</div>
-                        <div className={styles.albumProgress}>
-                          Progress: {song.progress}%
-                        </div>
+                        <div className={styles.albumTitle} title={song.title}>{song.title}</div>
+                        <div className={styles.albumArtist} title={song.artist}>{song.artist}</div>
                       </div>
                     ))
                   )}
@@ -330,10 +401,17 @@ const SheetView: React.FC = () => {
                           src={getAlbumCoverUrl(song)}
                           alt="cover"
                           className={styles.albumImg}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            if (target.src !== albumCover) {
+                              console.log(`[🖼️ SheetView] Image load failed, using default: ${target.src}`);
+                              target.src = albumCover;
+                            }
+                          }}
                         />
-                        <div className={styles.albumTitle}>{song.title}</div>
-                        <div className={styles.albumArtist}>{song.artist}</div>
-                        <div className={styles.albumGenre}>{song.genre}</div>
+                        <div className={styles.albumTitle} title={song.title}>{song.title}</div>
+                        <div className={styles.albumArtist} title={song.artist}>{song.artist}</div>
+                        <div className={styles.albumGenre} title={song.genre}>{song.genre}</div>
                       </div>
                     ))
                   )}
@@ -374,8 +452,15 @@ const SheetView: React.FC = () => {
                           src={getAlbumCoverUrl(song)}
                           alt="cover"
                           className={styles.albumImg}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            if (target.src !== albumCover) {
+                              console.log(`[🖼️ SheetView] Image load failed, using default: ${target.src}`);
+                              target.src = albumCover;
+                            }
+                          }}
                         />
-                        <div className={styles.albumTitle}>{song.title}</div>
+                        <div className={styles.albumTitle} title={song.title}>{song.title}</div>
                         <div className={styles.albumDate}>
                           {new Date(song.created_at).toLocaleString()}
                         </div>
@@ -388,6 +473,17 @@ const SheetView: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Generate 로딩 오버레이 */}
+      {isGenerating && (
+        <div className={styles.loadingOverlay}>
+          <div className={styles.loadingBox}>
+            <div className={styles.loadingSpinner}></div>
+            <div className={styles.loadingText}>기타 TAB 생성 중...</div>
+            <div className={styles.loadingSubText}>YouTube 영상을 분석하고 있습니다</div>
+          </div>
+        </div>
+      )}
 
       {/* 업로드 팝업 */}
       {showUploadPopup && (
