@@ -201,3 +201,41 @@
   background: #45a049;
   transform: scale(1.05);
 }
+
+.glassButton {
+  display: flex;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #000000;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 12px 24px;
+  cursor: pointer;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+  transition: all 0.3s ease;
+}
+
+.glassButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(62, 66, 125, 0.5);
+}
+
+.aiBadge {
+  background: #3d24aa;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  margin-left: 8px;
+  font-weight: bold;
+}
+
+.aiBadgeImage {
+  width: 23px;
+  height: 23px;
+  object-fit: contain; /* 또는 scale-down */
+  padding:1px;
+}

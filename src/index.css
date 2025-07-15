@@ -1,3 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -25,9 +31,18 @@ a:hover {
 body {
   margin: 0;
   display: flex;
+  background: linear-gradient(135deg, #000000, #accbd9, #000000);
+  background-size: 300% 300%;
+  animation: gradientMove 15s ease infinite;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 h1 {

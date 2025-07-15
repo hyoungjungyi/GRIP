@@ -1,6 +1,43 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./Timer.module.css";
 
+function Clock({ elapsedSeconds, targetSeconds }: { elapsedSeconds: number; targetSeconds: number }) {
+  const angle = (elapsedSeconds / targetSeconds) * 360;
+  const progress = elapsedSeconds / targetSeconds;
+  const remaining = Math.max(targetSeconds - elapsedSeconds, 0);
+
+  const formatTime = (timeInSeconds: number) => {
+    const min = Math.floor(timeInSeconds / 60);
+    const sec = timeInSeconds % 60;
+    return `${min}m ${sec}s`;
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center py-10">
+      {/* 남은 시간 표시 */}
+      <div className="mb-2 text-sm text-black font-semibold">
+        Remaining: {formatTime(remaining)}
+      </div>
+
+      {/* 시계 원 */}
+      <div className="relative flex items-center justify-center w-40 h-40 bg-gray-800 rounded-full shadow-inner">
+
+        {/* 배경 원 진행률 */}
+        <div
+          className="absolute inset-0 rounded-full"
+          style={{
+            background: `conic-gradient(#6366f1 ${progress * 360}deg, #1f2937 0deg)`,
+          }}
+        />
+
+        {/* 중심 점 */}
+        <div className="absolute w-3 h-3 bg-white rounded-full" />
+      </div>
+    </div>
+  );
+}
+
+
 const Timer: React.FC = () => {
   // 초기값을 localStorage에서 불러옴
   const getInitialTargetSeconds = () => {
@@ -136,84 +173,15 @@ const Timer: React.FC = () => {
         style={{
           textAlign: "center",
           marginBottom: 8,
-          fontSize: 14,
+          fontSize: 20,
           fontWeight: 600,
-          color: "#666",
+          color: "black",
         }}
       >
         Goal: {formatTime(targetSeconds, true)}
       </div>
-      <svg width={size} height={size}>
-        {/* 바깥 원 */}
-        <circle
-          cx={center}
-          cy={center}
-          r={radius}
-          stroke="#333"
-          strokeWidth={size * 0.03}
-          fill="#f9f9f9"
-        />
-        {/* 진행률 섹터 (흘러간 시간, 중심부터 가장자리까지) */}
-        {progress > 0 && (
-          <path
-            d={describeSector(
-              center,
-              center,
-              radius - size * 0.015,
-              -Math.PI / 2,
-              progressEndAngle
-            )}
-            fill="#1976d2"
-            opacity={0.25}
-            style={{ transition: "d 0.2s" }}
-          />
-        )}
-        {/* 눈금 */}
-        {[...Array(60)].map((_, i) => {
-          const tickAngle = i * 6;
-          const inner = radius * 1.0 - size * 0.05;
-          const outer = i % 5 === 0 ? radius * 1.13 : radius * 1.07;
-          const x1 = center + inner * Math.sin((Math.PI / 180) * tickAngle);
-          const y1 = center - inner * Math.cos((Math.PI / 180) * tickAngle);
-          const x2 = center + outer * Math.sin((Math.PI / 180) * tickAngle);
-          const y2 = center - outer * Math.cos((Math.PI / 180) * tickAngle);
-          return (
-            <line
-              key={i}
-              x1={x1}
-              y1={y1}
-              x2={x2}
-              y2={y2}
-              stroke="#888"
-              strokeWidth={i % 5 === 0 ? size * 0.01 : size * 0.005}
-            />
-          );
-        })}
-        {/* 시계 바늘 */}
-        <line
-          x1={center}
-          y1={center}
-          x2={handX}
-          y2={handY}
-          stroke="#1976d2"
-          strokeWidth={size * 0.02}
-          strokeLinecap="round"
-        />
-        {/* 중심 원 */}
-        <circle cx={center} cy={center} r={size * 0.035} fill="#1976d2" />
-        {/* 분/초 텍스트 (클릭 시 시간 설정) */}
-        <foreignObject x={center - 40} y={size - 60} width={80} height={30}>
-          <div
-            style={{
-              fontWeight: 600,
-              fontSize: 18,
-              textAlign: "center",
-            }}
-          >
-            {formatTime(seconds)}
-          </div>
-        </foreignObject>
-      </svg>
+      <Clock elapsedSeconds={elapsedSeconds} targetSeconds={targetSeconds} />
+
       {/* <div className={styles.buttonRow}>
         <button
           className={styles.timerBtn}

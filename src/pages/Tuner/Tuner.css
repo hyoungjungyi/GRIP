@@ -12,15 +12,18 @@
 }
 
 .tuner-container {
+  padding-top:100px;
+  min-height: calc(100vh-80px);
   display: flex;
-  height: calc(100vh - 80px); /* Navbar 높이만큼 제외 */
+  height: auto;
   width: 100%;
   box-sizing: border-box;
   background: #fff; /* 배경 흰색으로 변경 */
+  box-shadow: 0 2px 12px #eee;
   font-family: var(--font-family);
   align-items: center;
   justify-content: center;
-  padding-top: 80px; /* Navbar 아래로 시작 */
+  border-radius: 12px;
 }
 
 .pitch-visualizer-container {

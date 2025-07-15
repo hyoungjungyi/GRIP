@@ -26,7 +26,7 @@ const Navbar: React.FC = () => {
           <li>
             {user ? (
               <>
-                <span className="username">{user.username}님</span>
+                <span className="username">{user.username}님   </span>
                 <button onClick={logout} className="login-btn">
                   Logout
                 </button>

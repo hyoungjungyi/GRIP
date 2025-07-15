@@ -1,28 +1,33 @@
 /* ChromaticList.module.css */
 .listContainer {
   height: 150px;
-  background: #fce4ec;
+  background: rgba(100, 125, 175, 0.12); /* 블루 계열 반투명 */
+  backdrop-filter: blur(8px);
+  color: #394663; /* 연한 보라빛 텍스트 */
   border-radius: 12px;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 2px 12px #eee;
   font-size: 14px;
   font-weight: bold;
   position: relative;
   padding: 0;
 }
+
 .listTitle {
   font-size: 1rem;
   font-weight: 700;
   text-align: center;
   padding: 10px 0 4px 0;
-  background: #fce4ec;
+  background: #ffffff; /* 네이비 보라 */
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
   position: sticky;
   top: 0;
   z-index: 2;
-  border-bottom: 1.5px solid #e0b2c0;
+  border-bottom: 1.5px solid #4c5c7e; /* 진한 블루보라 */
 }
+
 .scrollArea {
   flex: 1;
   overflow-y: auto;

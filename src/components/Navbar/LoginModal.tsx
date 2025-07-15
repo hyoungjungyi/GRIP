@@ -3,6 +3,7 @@ import axios from "axios";
 import "./LoginModal.css";
 import { useUser } from "./UserContext";
 
+
 type LoginModalProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -29,7 +30,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
       window.google.accounts.id.initialize({
         client_id:
-          "529538752652-7o91e72iiiq3ij39s1f17p3g1smujo8k.apps.googleusercontent.com",
+          "752175459323-dvph1oe4dn8ljikgomme8c01ucfhptn2.apps.googleusercontent.com",
         callback: async (response: any) => {
           const googleToken = response.credential;
           try {

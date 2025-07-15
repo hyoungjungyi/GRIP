@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { useTimer } from "../context/TimerContext";
 import { useLocation } from "react-router-dom";
 
+
 const formatTime = (seconds: number) => {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;

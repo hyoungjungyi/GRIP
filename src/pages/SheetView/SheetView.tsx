@@ -91,8 +91,9 @@ const SheetView: React.FC = () => {
               placeholder="Paste a link here..."
               className={styles.input}
             />
-            <button onClick={handleGenerate} className={styles.button}>
-              GENERATE
+            <button onClick={handleGenerate} className={styles.glassButton}>
+              <img src="../src/assets/ai.png" alt="AI" className={styles.aiBadgeImage} />
+              <span>GENERATE</span>
             </button>
           </div>
         </div>

@@ -11,7 +11,7 @@
   flex: 1;
   min-width: 220px;
   height: 320px;
-  background: #f5f5f5;
+  background: #2e2e2e;
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -23,8 +23,8 @@
   flex: 1;
   min-width: 220px;
   height: 320px;
-  background: #e3f2fd;
-  border-radius: 50%;
+  background: #a8b6c2;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,7 +40,7 @@
 }
 .uploadBox {
   height: 150px;
-  background: #fff3e0;
+  background: #ffb74d;
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -50,7 +50,9 @@
 }
 .chromaticList {
   height: 150px;
-  background: #fce4ec;
+  background: rgba(244, 143, 177, 0.12);
+  backdrop-filter: blur(8px);
+  color: #f8bbd0;
   border-radius: 12px;
   display: flex;
   align-items: center;
