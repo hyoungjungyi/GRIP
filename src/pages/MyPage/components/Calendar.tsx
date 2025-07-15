@@ -1,23 +1,15 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Calendar.module.css";
-import { getAuthHeadersForGet, getApiBaseUrl } from "../../../utils/apiUtils";
-import { getMonthlyAchievementStatus, type AchievementStatus } from "./calendarApi";
+import { 
+  getMonthlyAchievementStatus, 
+  getPracticeHistoryByDate,
+  type AchievementStatus,
+  type PracticeData 
+} from "./calendarApi";
 
 const getDaysInMonth = (year: number, month: number) => {
   return new Date(year, month + 1, 0).getDate();
 };
-
-interface PracticeData {
-  date: string;
-  total_time: number;
-  achieved: boolean;
-  recording_url?: string;
-  chromatic?: Array<{
-    fingering: string;
-    bpm: number;
-    duration: number;
-  }>;
-}
 
 const Calendar: React.FC = () => {
   const today = new Date();
@@ -36,10 +28,12 @@ const Calendar: React.FC = () => {
   useEffect(() => {
     const fetchMonthlyStatus = async () => {
       try {
+        console.log(`📅 Calendar: Loading monthly status for ${year}-${month + 1}`);
         const statusData = await getMonthlyAchievementStatus(year, month);
+        console.log(`✅ Calendar: Monthly status loaded:`, statusData);
         setMonthlyStatus(statusData.daily_status || []);
       } catch (error) {
-        console.error("Failed to fetch monthly status:", error);
+        console.error("❌ Calendar: Failed to fetch monthly status:", error);
         setMonthlyStatus([]);
       }
     };
@@ -70,23 +64,19 @@ const Calendar: React.FC = () => {
       setLoading(true);
       setError(null);
       setPopupData(null);
+      
       const dateStr = `${year}-${(month + 1).toString().padStart(2, "0")}-${day
         .toString()
         .padStart(2, "0")}`;
-      const baseUrl = getApiBaseUrl();
+      
       try {
-        const res = await fetch(
-          `${baseUrl}/api/practice/history?date=${dateStr}`,
-          {
-            method: "GET",
-            headers: getAuthHeadersForGet(),
-          }
-        );
-        if (!res.ok) throw new Error("Unable to fetch data.");
-        const data: PracticeData = await res.json();
+        console.log(`📅 Calendar: Loading practice data for ${dateStr}`);
+        const data = await getPracticeHistoryByDate(dateStr);
         setPopupData(data);
+        console.log(`✅ Calendar: Practice data loaded for ${dateStr}:`, data);
       } catch (e: any) {
-        setError(e.message || "An error occurred");
+        console.error(`❌ Calendar: Failed to load practice data for ${dateStr}:`, e);
+        setError(e.message || "연습 데이터를 불러오는 중 오류가 발생했습니다.");
       } finally {
         setLoading(false);
       }
@@ -189,47 +179,66 @@ const Calendar: React.FC = () => {
               </button>
             </div>
             {loading ? (
-              <div>Loading...</div>
+              <div className={styles.popupLoading}>
+                <div className={styles.loadingSpinner}></div>
+                <span>연습 데이터를 불러오는 중...</span>
+              </div>
             ) : error ? (
-              <div style={{ color: "#f55" }}>{error}</div>
+              <div className={styles.popupError}>
+                <div className={styles.errorIcon}>⚠️</div>
+                <div className={styles.errorMessage}>{error}</div>
+                <button 
+                  className={styles.retryButton} 
+                  onClick={() => handleDayClick(popupDay!)}
+                >
+                  다시 시도
+                </button>
+              </div>
             ) : popupData ? (
-              <ul>
-                <li>
-                  <strong>Total Practice Time:</strong> {popupData.total_time}{" "}
-                  min
-                </li>
-                <li>
-                  <strong>Goal:</strong>{" "}
-                  {popupData.achieved ? "Achieved" : "Not achieved"}
-                </li>
-                {popupData.recording_url && (
-                  <li>
-                    <strong>Recording:</strong>{" "}
-                    <a
-                      href={popupData.recording_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Listen
-                    </a>
-                  </li>
-                )}
-                {popupData.chromatic && popupData.chromatic.length > 0 && (
-                  <li>
-                    <strong>Chromatic Practice:</strong>
-                    <ul>
-                      {popupData.chromatic.map((c, idx) => (
-                        <li key={idx}>
-                          Pattern: {c.fingering}, BPM: {c.bpm}, Time:{" "}
-                          {c.duration} min
-                        </li>
+              <div className={styles.popupContent}>
+                <div className={styles.practiceInfo}>
+                  <div className={styles.infoItem}>
+                    <span className={styles.infoLabel}>총 연습 시간:</span>
+                    <span className={styles.infoValue}>{popupData.total_time}분</span>
+                  </div>
+                  <div className={styles.infoItem}>
+                    <span className={styles.infoLabel}>목표 달성:</span>
+                    <span className={`${styles.infoValue} ${popupData.achieved ? styles.achieved : styles.notAchieved}`}>
+                      {popupData.achieved ? "✅ 달성" : "❌ 미달성"}
+                    </span>
+                  </div>
+                  {popupData.recording_url && (
+                    <div className={styles.infoItem}>
+                      <span className={styles.infoLabel}>녹음 파일:</span>
+                      <a
+                        href={popupData.recording_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.recordingLink}
+                      >
+                        🎵 녹음 듣기
+                      </a>
+                    </div>
+                  )}
+                  {popupData.chromatic && popupData.chromatic.length > 0 && (
+                    <div className={styles.chromaticSection}>
+                      <h4 className={styles.sectionTitle}>크로매틱 연습</h4>
+                      {popupData.chromatic.map((item, index) => (
+                        <div key={index} className={styles.chromaticItem}>
+                          <span>핑거링: {item.fingering}</span>
+                          <span>BPM: {item.bpm}</span>
+                          <span>시간: {item.duration}분</span>
+                        </div>
                       ))}
-                    </ul>
-                  </li>
-                )}
-              </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
             ) : (
-              <div>No practice data</div>
+              <div className={styles.noDataMessage}>
+                <div className={styles.noDataIcon}>📅</div>
+                <span>이 날짜에는 연습 기록이 없습니다.</span>
+              </div>
             )}
           </div>
         </div>
