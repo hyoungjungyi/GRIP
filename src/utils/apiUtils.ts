@@ -2,7 +2,8 @@
 
 // 인증 헤더 생성 함수
 export const getAuthHeaders = () => {
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = localStorage.getItem("accessToken") || localStorage.getItem("jwt_token");
+  
   return {
     "Content-Type": "application/json",
     ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
@@ -11,7 +12,8 @@ export const getAuthHeaders = () => {
 
 // GET 요청용 인증 헤더 (Content-Type 제외)
 export const getAuthHeadersForGet = () => {
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = localStorage.getItem("accessToken") || localStorage.getItem("jwt_token");
+  
   return {
     ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
   };
