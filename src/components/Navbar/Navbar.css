@@ -37,3 +37,17 @@ nav a {
 nav a:hover {
   color: #61dafb;
 }
+
+.login-btn {
+  color: black; /* ✅ 텍스트 색상 검정 */
+  background: white; /* 필요 시 배경 투명 */
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  margin-left: 12px; /* ✅ username과 간격 줌 */
+}
+
+.username {
+  color: rgb(255, 255, 255); /* ✅ username도 검정색 */
+  font-weight: 600;
+}

@@ -1,0 +1,297 @@
+/* Calendar.module.css */
+.calendarContainer {
+  width: 100%;
+  padding: 16px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #eee;
+  color: black;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.arrow {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  margin: 0 12px;
+}
+.monthLabel {
+  font-weight: bold;
+  font-size: 18px;
+}
+.calendarTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+th {
+  color: #1976d2;
+  font-weight: bold;
+  padding: 4px 0;
+}
+.day {
+  background: #fff;
+  border-radius: 6px;
+  padding: 6px 0;
+  font-size: 15px;
+  position: relative;
+  height: 40px;
+}
+
+.dayContent {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.dayNumber {
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 2;
+}
+
+.stamp {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.successStamp {
+  color: #34d399; /* emerald-400 */
+  font-size: 1.2rem;
+  font-weight: bold;
+  background-color: #ecfdf5; /* light green bg */
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0, 255, 150, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.successStamp:hover {
+  transform: scale(1.1);
+}
+
+.failureStamp {
+  color: #f87171; /* red-400 */
+  font-size: 1.2rem;
+  font-weight: bold;
+  background-color: #fef2f2; /* light red bg */
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(255, 0, 100, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.failureStamp:hover {
+  transform: scale(1.1);
+}
+
+.empty {
+  background: transparent;
+}
+.popupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.popupBox {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px #8888;
+  padding: 32px 40px;
+  min-width: 340px;
+  max-width: 90vw;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.popupHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 18px;
+}
+.popupClose {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+/* 팝업 내용 스타일 */
+.popupLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  color: #666;
+}
+
+.loadingSpinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #1976d2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.popupError {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  text-align: center;
+}
+
+.errorIcon {
+  font-size: 48px;
+}
+
+.errorMessage {
+  color: #f44336;
+  font-weight: 500;
+}
+
+.retryButton {
+  background: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.retryButton:hover {
+  background: #1565c0;
+}
+
+.popupContent {
+  width: 100%;
+}
+
+.practiceInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.infoLabel {
+  font-weight: 600;
+  color: #333;
+}
+
+.infoValue {
+  font-weight: 500;
+}
+
+.achieved {
+  color: #4caf50;
+}
+
+.notAchieved {
+  color: #f44336;
+}
+
+.recordingLink {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #1976d2;
+  transition: all 0.2s;
+}
+
+.recordingLink:hover {
+  background: #1976d2;
+  color: white;
+}
+
+.chromaticSection {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 2px solid #eee;
+}
+
+.sectionTitle {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.chromaticItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  margin: 4px 0;
+  background: #f8f9fa;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.noDataMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 20px;
+  color: #666;
+  text-align: center;
+}
+
+.noDataIcon {
+  font-size: 48px;
+  opacity: 0.5;
+}

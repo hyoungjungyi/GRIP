@@ -1,0 +1,75 @@
+/* Timer.module.css */
+.timerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+.buttonRow {
+  margin-top: 18px;
+  display: flex;
+  gap: 12px;
+}
+.timerBtn {
+  padding: 8px 18px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  background: #637280;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+.timerBtn:disabled {
+  background: #bdbdbd;
+  cursor: not-allowed;
+}
+.settingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.settingBox {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px #8888;
+  padding: 32px 40px;
+  min-width: 280px;
+  max-width: 90vw;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.settingHeader {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 18px;
+}
+.settingInputs {
+  display: flex;
+  gap: 8px;
+  font-size: 16px;
+  margin-bottom: 18px;
+}
+.settingInputs input {
+  width: 48px;
+  padding: 4px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  text-align: right;
+}
+.settingButtons {
+  display: flex;
+  gap: 12px;
+}

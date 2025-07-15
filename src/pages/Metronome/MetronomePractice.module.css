@@ -1,0 +1,30 @@
+.metronomePracticeContainer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 0 auto;
+  gap: 20px;
+  height: 80vh;
+  padding-top: 80px;
+}
+
+.metronomeSection {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  margin: 0 30px;
+}
+
+.chromaticSection {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  overflow-y: auto;
+  align-items: center;
+  justify-content: center;
+}
