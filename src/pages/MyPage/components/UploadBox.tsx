@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import styles from "./UploadBox.module.css";
 import { useUser } from "../../../components/Navbar/UserContext";
 
@@ -6,13 +6,48 @@ const UploadBox: React.FC = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [songTitle, setSongTitle] = useState("");
+  const [existingTitles, setExistingTitles] = useState<string[]>([]);
+  const [showTitleDropdown, setShowTitleDropdown] = useState(false);
+  const [isLoadingTitles, setIsLoadingTitles] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const { user } = useUser();
+
+  // 기존 제목 리스트 가져오기
+  const fetchExistingTitles = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) return;
+
+    setIsLoadingTitles(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/files/titles`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        setExistingTitles(result.data.titles || []);
+        console.log("[📋 Titles Loaded]", result.data.titles);
+      }
+    } catch (error) {
+      console.error("[❌ Titles Loading Error]", error);
+    } finally {
+      setIsLoadingTitles(false);
+    }
+  };
 
   const handleBoxClick = () => {
     setShowPopup(true);
+    fetchExistingTitles(); // 팝업 열릴 때 기존 제목들 로드
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,8 +167,50 @@ const UploadBox: React.FC = () => {
     setShowPopup(false);
     setSelectedFile(null);
     setSongTitle("");
+    setExistingTitles([]);
+    setShowTitleDropdown(false);
     setIsUploading(false);
   };
+
+  // 제목 선택 핸들러
+  const handleTitleSelect = (title: string) => {
+    setSongTitle(title);
+    setShowTitleDropdown(false);
+  };
+
+  // 제목 입력 핸들러
+  const handleTitleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSongTitle(e.target.value);
+    setShowTitleDropdown(
+      e.target.value.length > 0 && existingTitles.length > 0
+    );
+  };
+
+  // 제목 필터링
+  const filteredTitles = existingTitles.filter((title) =>
+    title.toLowerCase().includes(songTitle.toLowerCase())
+  );
+
+  // 외부 클릭 감지로 드롭다운 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      const titleInput = titleInputRef.current;
+      const dropdown = dropdownRef.current;
+      
+      // 제목 입력 필드나 드롭다운 영역 클릭이 아닌 경우에만 닫기
+      if (titleInput && !titleInput.contains(target) && 
+          dropdown && !dropdown.contains(target)) {
+        setShowTitleDropdown(false);
+      }
+    };
+
+    if (showTitleDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [showTitleDropdown]);
 
   // 드래그 앤 드롭 이벤트
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -149,6 +226,7 @@ const UploadBox: React.FC = () => {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       setSelectedFile(e.dataTransfer.files[0]);
       setShowPopup(true);
+      fetchExistingTitles(); // 드롭 시에도 기존 제목들 로드
     }
   };
 
@@ -217,7 +295,7 @@ const UploadBox: React.FC = () => {
             )}
 
             {/* 노래 제목 입력 */}
-            <div style={{ marginBottom: 16 }}>
+            <div style={{ marginBottom: 16, position: "relative" }}>
               <label
                 style={{
                   display: "block",
@@ -226,12 +304,32 @@ const UploadBox: React.FC = () => {
                 }}
               >
                 노래 제목:
+                {isLoadingTitles && (
+                  <span
+                    style={{ fontSize: "12px", color: "#666", marginLeft: 8 }}
+                  >
+                    (기존 제목 로딩 중...)
+                  </span>
+                )}
+                {existingTitles.length > 0 && (
+                  <span
+                    style={{ fontSize: "12px", color: "#666", marginLeft: 8 }}
+                  >
+                    (기존 제목 {existingTitles.length}개 available)
+                  </span>
+                )}
               </label>
               <input
+                ref={titleInputRef}
                 type="text"
                 value={songTitle}
-                onChange={(e) => setSongTitle(e.target.value)}
-                placeholder="노래 제목을 입력하세요"
+                onChange={handleTitleInputChange}
+                onFocus={() => setShowTitleDropdown(existingTitles.length > 0)}
+                placeholder={
+                  existingTitles.length > 0
+                    ? "기존 제목 선택 또는 새로 입력하세요"
+                    : "노래 제목을 입력하세요"
+                }
                 style={{
                   width: "100%",
                   padding: "8px 12px",
@@ -241,6 +339,62 @@ const UploadBox: React.FC = () => {
                 }}
                 disabled={isUploading}
               />
+
+              {/* 제목 드롭다운 */}
+              {showTitleDropdown && filteredTitles.length > 0 && (
+                <div
+                  ref={dropdownRef}
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    right: 0,
+                    backgroundColor: "white",
+                    border: "1px solid #ddd",
+                    borderTop: "none",
+                    borderRadius: "0 0 4px 4px",
+                    maxHeight: "150px",
+                    overflowY: "auto",
+                    zIndex: 1000,
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                  }}
+                >
+                  {filteredTitles.map((title, index) => (
+                    <div
+                      key={index}
+                      onMouseDown={(e) => {
+                        e.preventDefault(); // 포커스 유지
+                        e.stopPropagation(); // 이벤트 전파 방지
+                        handleTitleSelect(title);
+                      }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleTitleSelect(title);
+                      }}
+                      style={{
+                        padding: "8px 12px",
+                        cursor: "pointer",
+                        borderBottom:
+                          index < filteredTitles.length - 1
+                            ? "1px solid #eee"
+                            : "none",
+                        backgroundColor: "white",
+                        fontSize: "14px",
+                        userSelect: "none", // 텍스트 선택 방지
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = "#f0f0f0";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = "white";
+                      }}
+                    >
+                      {title}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div style={{ display: "flex", gap: 12 }}>
