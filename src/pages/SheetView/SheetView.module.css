@@ -190,31 +190,64 @@
   background: #fff;
   color: #ffc107;
   border: 2px solid #ffc107;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
 .favoriteButton:hover {
   background: #ffc107;
   color: #fff;
   transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+.favoriteButton:active {
+  transform: scale(0.95);
 }
 
 .favoriteActive {
   background: #ffc107;
   color: #fff;
+  animation: favoriteAdded 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .favoriteActive:hover {
   background: #ffb300;
+  box-shadow: 0 4px 12px rgba(255, 179, 0, 0.4);
+}
+
+@keyframes favoriteAdded {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .loading {
   opacity: 0.6;
   cursor: not-allowed;
   pointer-events: none;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 
 .loading:hover {
   transform: none;
+  box-shadow: none;
 }
 
 .disabled {

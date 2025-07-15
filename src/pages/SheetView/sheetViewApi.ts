@@ -124,13 +124,41 @@ export const addToSavedSongs = async (songId: number) => {
       body: JSON.stringify({ songId }),
     });
 
+    console.log("🔍 즐겨찾기 추가 응답 상태:", response.status);
+
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.error(
+        "❌ Add to saved songs HTTP error:",
+        response.status,
+        errorText
+      );
+
+      // 409 (Conflict) - 이미 추가된 경우, 성공으로 처리
+      if (response.status === 409) {
+        console.log("⚠️ 이미 즐겨찾기에 추가된 곡 - 성공으로 처리");
+        return { success: true, message: "이미 즐겨찾기에 추가된 곡입니다." };
+      }
+
+      throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
     }
 
     const result = await response.json();
-    console.log("✅ Add to saved songs response:", result);
-    return result;
+    console.log(
+      "✅ Add to saved songs response:",
+      JSON.stringify(result, null, 2)
+    );
+
+    // 서버 응답 형태: { success: true, message: string, data: {...} }
+    if (result?.success === true) {
+      return { success: true, ...result };
+    } else {
+      console.error(
+        "❌ Add to saved songs API returned success=false:",
+        result
+      );
+      throw new Error(result?.message || "API 응답에서 success가 false입니다.");
+    }
   } catch (error) {
     console.error("❌ Failed to add to saved songs:", error);
     throw error;
@@ -146,13 +174,41 @@ export const removeFromSavedSongs = async (songId: number) => {
       headers: getAuthHeadersForGet(),
     });
 
+    console.log("🔍 즐겨찾기 제거 응답 상태:", response.status);
+
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.error(
+        "❌ Remove from saved songs HTTP error:",
+        response.status,
+        errorText
+      );
+
+      // 404 - 이미 제거된 경우, 성공으로 처리
+      if (response.status === 404) {
+        console.log("⚠️ 이미 즐겨찾기에서 제거된 곡 - 성공으로 처리");
+        return { success: true, message: "이미 즐겨찾기에서 제거된 곡입니다." };
+      }
+
+      throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
     }
 
     const result = await response.json();
-    console.log("✅ Remove from saved songs response:", result);
-    return result;
+    console.log(
+      "✅ Remove from saved songs response:",
+      JSON.stringify(result, null, 2)
+    );
+
+    // 서버 응답 형태: { success: true, message: string }
+    if (result?.success === true) {
+      return { success: true, ...result };
+    } else {
+      console.error(
+        "❌ Remove from saved songs API returned success=false:",
+        result
+      );
+      throw new Error(result?.message || "API 응답에서 success가 false입니다.");
+    }
   } catch (error) {
     console.error("❌ Failed to remove from saved songs:", error);
     throw error;
@@ -163,24 +219,57 @@ export const removeFromSavedSongs = async (songId: number) => {
 export const checkSavedSongStatus = async (songId: number) => {
   try {
     console.log("⭐ 즐겨찾기 상태 확인:", songId);
-    
-    const response = await fetch(`${API_BASE_URL}/api/songs/saved/status/${songId}`, {
-      method: "GET",
-      headers: getAuthHeadersForGet(),
-    });
+
+    const response = await fetch(
+      `${API_BASE_URL}/api/songs/saved/status/${songId}`,
+      {
+        method: "GET",
+        headers: getAuthHeadersForGet(),
+      }
+    );
+
+    console.log("🔍 즐겨찾기 상태 확인 응답 상태:", response.status);
 
     if (!response.ok) {
-      console.error("❌ API 응답 오류:", response.status);
-      return { success: false, isSaved: false };
+      console.error("❌ 즐겨찾기 상태 확인 HTTP 오류:", response.status);
+
+      // 401/403 등 인증 오류인 경우 로그인되지 않은 것으로 간주
+      if (response.status === 401 || response.status === 403) {
+        console.log("🔒 인증 오류 - 즐겨찾기 상태 false로 반환");
+        return { success: true, isSaved: false };
+      }
+
+      // 기타 오류도 false로 처리
+      return { success: true, isSaved: false };
     }
 
     const result = await response.json();
-    console.log("✅ 즐겨찾기 상태 결과:", result);
-    
-    return result;
+    console.log("✅ 즐겨찾기 상태 원본 결과:", JSON.stringify(result, null, 2));
+
+    // 서버 응답 형태에 맞춘 처리
+    // 서버에서 { success: true, isSaved: boolean, savedId: number|null, savedAt: string|null } 형태로 응답
+    let isSaved = false;
+
+    if (result?.success === true) {
+      // 서버에서 명시적으로 isSaved 필드를 제공
+      isSaved = Boolean(result.isSaved);
+      console.log(
+        "📍 서버 응답 기반 isSaved:",
+        result.isSaved,
+        "→ Boolean:",
+        isSaved
+      );
+    } else {
+      console.log("📍 서버 응답에서 success가 true가 아님 - false로 설정");
+    }
+
+    console.log(`🎯 최종 즐겨찾기 상태: isSaved=${isSaved}`);
+
+    return { success: true, isSaved };
   } catch (error) {
     console.error("❌ 즐겨찾기 상태 확인 실패:", error);
-    return { success: false, isSaved: false };
+    // 네트워크 오류 등의 경우에도 false로 처리
+    return { success: true, isSaved: false };
   }
 };
 

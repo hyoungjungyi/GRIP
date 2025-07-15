@@ -6,6 +6,13 @@ import { useUser } from "../../components/Navbar/UserContext";
 import Toast from "../../components/Toast";
 import styles from "./SheetView.module.css";
 
+// 즐겨찾기 상태 변경 이벤트를 위한 타입 정의
+declare global {
+  interface WindowEventMap {
+    'favoriteChanged': CustomEvent<{ songId: number; isFavorite: boolean }>;
+  }
+}
+
 const AlbumDetail: React.FC = () => {
   const { songId } = useParams<{ songId: string }>();
   const { toasts, removeToast, showSuccess, showError } = useToast();
@@ -25,26 +32,33 @@ const AlbumDetail: React.FC = () => {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [lastPosition, setLastPosition] = useState({ x: 0, y: 0 });
 
-  // 즐겨찾기 상태 확인 (페이지 로딩시에만)
+  // 즐겨찾기 상태 확인 (페이지 로딩시)
   useEffect(() => {
     const loadFavoriteStatus = async () => {
-      if (!songId) return;
+      if (!songId) {
+        console.log('[⭐ AlbumDetail] songId가 없음');
+        setIsFavorite(false);
+        return;
+      }
+
+      // 로그인 상태 확인
+      const token = localStorage.getItem("accessToken") || localStorage.getItem("jwt_token");
+      if (!user || !token) {
+        console.log('[⭐ AlbumDetail] 로그인되지 않음 - 즐겨찾기 false');
+        setIsFavorite(false);
+        return;
+      }
       
       try {
-        console.log(`[⭐ AlbumDetail] 즐겨찾기 상태 확인 - songId: ${songId}`);
+        console.log(`[⭐ AlbumDetail] 즐겨찾기 상태 확인 시작 - songId: ${songId}`);
         const result = await checkSavedSongStatus(parseInt(songId));
-        console.log(`[⭐ AlbumDetail] API 결과:`, result);
+        console.log(`[⭐ AlbumDetail] API 응답:`, result);
         
-        // 즐겨찾기 상태 설정
-        const isCurrentlyFavorite = result?.isSaved === true;
-        setIsFavorite(isCurrentlyFavorite);
-        console.log(`[⭐ AlbumDetail] 즐겨찾기 상태 설정: ${isCurrentlyFavorite}`);
+        // API에서 isSaved 값을 받아서 컴포넌트의 isFavorite state에 설정
+        const isSaved = Boolean(result?.isSaved);
+        setIsFavorite(isSaved);
         
-        // 🧪 테스트: songId가 1, 2, 3인 경우 강제로 즐겨찾기 상태
-        if (['1', '2', '3'].includes(songId)) {
-          console.log(`[🧪 TEST] songId ${songId} 강제로 즐겨찾기 상태로 설정`);
-          setIsFavorite(true);
-        }
+        console.log(`[⭐ AlbumDetail] 즐겨찾기 상태 설정 완료: isSaved=${result?.isSaved} → isFavorite=${isSaved}`);
         
       } catch (error) {
         console.error(`[❌ AlbumDetail] 즐겨찾기 상태 확인 실패:`, error);
@@ -52,8 +66,9 @@ const AlbumDetail: React.FC = () => {
       }
     };
 
+    // 컴포넌트 마운트 시 즐겨찾기 상태 바로 확인
     loadFavoriteStatus();
-  }, [songId]);
+  }, [songId, user]);
 
   // API로 악보 데이터 불러오기
   useEffect(() => {
@@ -106,41 +121,67 @@ const AlbumDetail: React.FC = () => {
   const handleFavoriteToggle = async () => {
     if (!songId || favoriteLoading) return;
 
-    // 로그인 상태 확인
-    if (!user) {
+    // 로그인 확인
+    const token = localStorage.getItem("accessToken") || localStorage.getItem("jwt_token");
+    if (!user || !token) {
       showError("로그인이 필요합니다.");
       return;
     }
 
     setFavoriteLoading(true);
+    const previousState = isFavorite; // 실패시 복원용
+    
     try {
-      console.log(`[⭐ AlbumDetail] 즐겨찾기 토글 시작 - songId: ${songId}, 현재 상태: ${isFavorite}`);
+      console.log(`[⭐ AlbumDetail] 즐겨찾기 토글 - songId: ${songId}, 현재 isFavorite: ${isFavorite}`);
       
       if (isFavorite) {
         // 즐겨찾기 제거
-        await removeFromSavedSongs(parseInt(songId));
-        setIsFavorite(false);
-        showSuccess("즐겨찾기에서 제거되었습니다!");
-        console.log(`[⭐ AlbumDetail] 즐겨찾기 제거 완료 - songId: ${songId}`);
+        console.log(`[⭐ AlbumDetail] 즐겨찾기 제거 요청 시작`);
+        const result = await removeFromSavedSongs(parseInt(songId));
+        console.log(`[⭐ AlbumDetail] 즐겨찾기 제거 API 응답:`, result);
+        
+        if (result?.success) {
+          setIsFavorite(false);
+          showSuccess("즐겨찾기에서 제거되었습니다!");
+          console.log(`[✅ AlbumDetail] 즐겨찾기 제거 완료 - isFavorite: true → false`);
+          
+          // 다른 컴포넌트에 상태 변경 알림
+          window.dispatchEvent(new CustomEvent('favoriteChanged', { 
+            detail: { songId: parseInt(songId), isFavorite: false } 
+          }));
+        } else {
+          throw new Error('즐겨찾기 제거에 실패했습니다.');
+        }
       } else {
         // 즐겨찾기 추가
-        await addToSavedSongs(parseInt(songId));
-        setIsFavorite(true);
-        showSuccess("즐겨찾기에 추가되었습니다!");
-        console.log(`[⭐ AlbumDetail] 즐겨찾기 추가 완료 - songId: ${songId}`);
+        console.log(`[⭐ AlbumDetail] 즐겨찾기 추가 요청 시작`);
+        const result = await addToSavedSongs(parseInt(songId));
+        console.log(`[⭐ AlbumDetail] 즐겨찾기 추가 API 응답:`, result);
+        
+        if (result?.success) {
+          setIsFavorite(true);
+          showSuccess("즐겨찾기에 추가되었습니다!");
+          console.log(`[✅ AlbumDetail] 즐겨찾기 추가 완료 - isFavorite: false → true`);
+          
+          // 다른 컴포넌트에 상태 변경 알림
+          window.dispatchEvent(new CustomEvent('favoriteChanged', { 
+            detail: { songId: parseInt(songId), isFavorite: true } 
+          }));
+        } else {
+          throw new Error('즐겨찾기 추가에 실패했습니다.');
+        }
       }
     } catch (error: any) {
-      console.error(`[❌ AlbumDetail] 즐겨찾기 토글 실패 - songId: ${songId}:`, error);
+      console.error(`[❌ AlbumDetail] 즐겨찾기 토글 실패:`, error);
       
-      // 에러 타입에 따른 상세 메시지
-      if (error.message?.includes('401')) {
+      // 실패시 이전 상태로 복원
+      setIsFavorite(previousState);
+      
+      // 간단한 에러 메시지
+      if (error.message?.includes('401') || error.message?.includes('403')) {
         showError('로그인이 만료되었습니다. 다시 로그인해주세요.');
-      } else if (error.message?.includes('404')) {
-        showError('해당 곡을 찾을 수 없습니다.');
-      } else if (error.message?.includes('409')) {
-        showError('이미 즐겨찾기에 추가된 곡입니다.');
       } else {
-        showError('즐겨찾기 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+        showError('즐겨찾기 처리 중 오류가 발생했습니다.');
       }
     } finally {
       setFavoriteLoading(false);
