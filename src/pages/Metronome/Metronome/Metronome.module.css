@@ -22,6 +22,7 @@
   border-radius: 4px;
   width: 80px;
   text-align: center;
+  color: black;
 }
 
 .indicator {
@@ -34,4 +35,8 @@
 
 .indicator.active {
   background-color: #4caf50;
+}
+
+.buttonTextBlack{
+  color:black;
 }

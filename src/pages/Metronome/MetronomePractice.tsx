@@ -273,41 +273,40 @@ const MetronomePractice: React.FC = () => {
     <>
       <Navbar />
       <div className={styles.metronomePracticeContainer}>
-        <div className={styles.chromaticSection}>
-          <div style={{ flex: 1 }} />
-          <div className={styles.metronomeSection}></div>
-        </div>
-
-        {/* Metronome Section (Main) */}
-        <section className={styles.metronomeSection}>
-          <h1>Metronome</h1>
-          <Metronome />
-        </section>
-
-        {/* Chromatic Practice & Practice Log Section (Side) */}
-        <div className={styles.chromaticSection}>
-          <section>
-            <h2>Chromatic Practice</h2>
-            <ChromaticPractice
-              addLog={addLog}
-              isTracking={isTracking}
-              onTracking={handleTracking}
-              practiceDuration={practiceDuration}
-              pattern={pattern}
-              setPattern={setPattern}
-              maxBpm={maxBpm}
-              setMaxBpm={setMaxBpm}
-            />
+        <div className={styles.contentWrapper}>
+          <section className={styles.metronomeSection}>
+            <div className={styles.metronomeWrapper}>
+              <div className={styles.topBar} />
+              <h1>Metronome</h1>
+              <Metronome />
+            </div>
           </section>
 
-          <section>
-            <PracticeLog
-              logs={practiceLogs}
-              onDeleteLog={handleDeleteLog}
-              onResumeLog={handleResumeLog}
-              onLoadLastPreset={loadLastPreset}
-            />
-          </section>
+
+          <div className={styles.chromaticSection}>
+            <section>
+              <h2>Chromatic Practice</h2>
+              <ChromaticPractice
+                addLog={addLog}
+                isTracking={isTracking}
+                onTracking={handleTracking}
+                practiceDuration={practiceDuration}
+                pattern={pattern}
+                setPattern={setPattern}
+                maxBpm={maxBpm}
+                setMaxBpm={setMaxBpm}
+              />
+            </section>
+
+            <section>
+              <PracticeLog
+                logs={practiceLogs}
+                onDeleteLog={handleDeleteLog}
+                onResumeLog={handleResumeLog}
+                onLoadLastPreset={loadLastPreset}
+              />
+            </section>
+          </div>
         </div>
       </div>
       <Nav_Met />

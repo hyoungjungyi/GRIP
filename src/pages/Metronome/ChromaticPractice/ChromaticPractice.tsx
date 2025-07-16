@@ -38,8 +38,15 @@ const ChromaticPractice: React.FC<ChromaticPracticeProps> = ({
 
   // 버튼 텍스트 결정
   let buttonText = "Start Chromatic Practice";
-  if (isTracking) buttonText = "Pause";
-  else if (wasPaused) buttonText = "Resume";
+  let buttonColor = "black";
+
+  if (isTracking) {
+    buttonText = "Pause";
+    buttonColor = "red";    // 빨강
+  } else if (wasPaused) {
+    buttonText = "Resume";
+    buttonColor = "green";  // 초록
+  }
 
   const handleTracking = () => {
     setWasPaused(isTracking); // Pause 상태 기록
@@ -60,7 +67,11 @@ const ChromaticPractice: React.FC<ChromaticPracticeProps> = ({
     <div className={styles.chromaticPracticeContainer}>
       <button
         onClick={handleTracking}
-        style={{ width: "100%", minWidth: "200px" }}
+        style={{
+          width: "100%",
+          minWidth: "200px",
+          color: buttonColor,
+        }}
       >
         {buttonText}
       </button>
@@ -100,7 +111,7 @@ const ChromaticPractice: React.FC<ChromaticPracticeProps> = ({
       </div>
       <button
         onClick={handleRecord}
-        style={{ width: "100%", minWidth: "200px" }}
+        style={{ width: "100%", minWidth: "200px", color:"black"}}
       >
         Record
       </button>

@@ -59,7 +59,9 @@ const Metronome: React.FC = () => {
           }}
         />
       </div>
-      <button onClick={handleStartStop}>{isPlaying ? "Stop" : "Start"}</button>
+      <button onClick={handleStartStop} className={styles.buttonTextBlack}>
+          {isPlaying ? "Stop" : "Start"}
+      </button>
       <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
         {[0, 1, 2, 3].map((i) => (
           <div
