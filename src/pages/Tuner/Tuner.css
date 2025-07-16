@@ -12,6 +12,7 @@
 }
 
 .tuner-container {
+  margin-top: 120px; 
   padding-top:100px;
   min-height: calc(100vh-80px);
   display: flex;
