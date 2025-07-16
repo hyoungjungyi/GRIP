@@ -73,3 +73,47 @@
   display: flex;
   gap: 12px;
 }
+
+.clockWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.remainingText {
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.clockOuter {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  background-color: #1f2937;
+  border-radius: 50%;
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.clockInner {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  transition: background 0.3s ease;
+}
+
+.clockCenterDot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+

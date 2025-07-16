@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getSheetImage, addToSavedSongs, removeFromSavedSongs, checkSavedSongStatus, deleteSong } from "./sheetViewApi";
 import { useToast } from "../../hooks/useToast";
 import { useUser } from "../../components/Navbar/UserContext";
+import { FaStar, FaRegStar, FaTrashAlt, FaRedo, FaMusic } from "react-icons/fa";
+
 import Toast from "../../components/Toast";
 import styles from "./SheetView.module.css";
 
@@ -357,60 +359,37 @@ const AlbumDetail: React.FC = () => {
       <div className={styles.controlButtons}>
         {/* 이미지 리셋 버튼 */}
         <button
+          className={`${styles.controlButton} ${styles.favoriteButton} ${isFavorite ? styles.favoriteActive : ""} ${favoriteLoading ? styles.loading : ""} ${!user ? styles.disabled : ""}`}
+          onClick={handleFavoriteToggle}
+          disabled={favoriteLoading || !user}
+          title={!user ? "로그인이 필요합니다" : favoriteLoading ? "처리 중..." : isFavorite ? "즐겨찾기 해제" : "즐겨찾기 추가"}
+        >
+          {favoriteLoading ? "⏳" : isFavorite ? <FaStar /> : <FaRegStar />}
+        </button>
+
+        <button
           className={`${styles.controlButton} ${styles.resetButton}`}
           onClick={handleResetImage}
           title="이미지 원래 크기로 리셋"
         >
-          ⌂
+          <FaRedo />
         </button>
 
-        {/* 타브/계이름 전환 버튼 */}
         <button
           className={`${styles.controlButton} ${styles.sheetTypeButton}`}
           onClick={handleSheetTypeToggle}
-          title={
-            sheetType === "tab" ? "계이름 악보로 전환" : "타브 악보로 전환"
-          }
+          title={sheetType === "tab" ? "계이름 악보로 전환" : "타브 악보로 전환"}
         >
-          {sheetType === "tab" ? "♪" : "TAB"}
+          {sheetType === "tab" ? <FaMusic /> : "TAB" }
         </button>
 
-        {/* 즐겨찾기 버튼 */}
         <button
-          className={`${styles.controlButton} ${styles.favoriteButton} ${
-            isFavorite ? styles.favoriteActive : ""
-          } ${favoriteLoading ? styles.loading : ""} ${!user ? styles.disabled : ""}`}
-          onClick={handleFavoriteToggle}
-          disabled={favoriteLoading || !user}
-          title={
-            !user
-              ? "로그인이 필요합니다"
-              : favoriteLoading 
-                ? "처리 중..." 
-                : isFavorite 
-                  ? "즐겨찾기 해제" 
-                  : "즐겨찾기 추가"
-          }
-        >
-          {favoriteLoading ? "⏳" : isFavorite ? "★" : "☆"}
-        </button>
-
-        {/* 삭제 버튼 */}
-        <button
-          className={`${styles.controlButton} ${styles.deleteButton} ${
-            isDeleting ? styles.loading : ""
-          } ${!user ? styles.disabled : ""}`}
+          className={`${styles.controlButton} ${styles.deleteButton} ${isDeleting ? styles.loading : ""} ${!user ? styles.disabled : ""}`}
           onClick={handleDeleteSong}
           disabled={isDeleting || !user}
-          title={
-            !user
-              ? "로그인이 필요합니다"
-              : isDeleting 
-                ? "삭제 중..." 
-                : "곡 삭제"
-          }
+          title={!user ? "로그인이 필요합니다" : isDeleting ? "삭제 중..." : "곡 삭제"}
         >
-          {isDeleting ? "⏳" : "🗑️"}
+          {isDeleting ? "⏳" : <FaTrashAlt />}
         </button>
       </div>
     </div>

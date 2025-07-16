@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import styles from "./Timer.module.css";
 
 function Clock({ elapsedSeconds, targetSeconds }: { elapsedSeconds: number; targetSeconds: number }) {
-  const angle = (elapsedSeconds / targetSeconds) * 360;
   const progress = elapsedSeconds / targetSeconds;
   const remaining = Math.max(targetSeconds - elapsedSeconds, 0);
 
@@ -13,29 +12,26 @@ function Clock({ elapsedSeconds, targetSeconds }: { elapsedSeconds: number; targ
   };
 
   return (
-    <div className="flex flex-col items-center justify-center py-10">
-      {/* 남은 시간 표시 */}
-      <div className="mb-2 text-sm text-black font-semibold">
+    <div className={styles.clockWrapper}>
+      {/* 남은 시간 */}
+      <div className={styles.remainingText}>
         Remaining: {formatTime(remaining)}
       </div>
 
       {/* 시계 원 */}
-      <div className="relative flex items-center justify-center w-40 h-40 bg-gray-800 rounded-full shadow-inner">
-
-        {/* 배경 원 진행률 */}
+      <div className={styles.clockOuter}>
         <div
-          className="absolute inset-0 rounded-full"
+          className={styles.clockInner}
           style={{
-            background: `conic-gradient(#6366f1 ${progress * 360}deg, #1f2937 0deg)`,
+            background: `conic-gradient(#6366f1 ${progress * 360}deg, #d1d5db 0deg)`,
           }}
         />
-
-        {/* 중심 점 */}
-        <div className="absolute w-3 h-3 bg-white rounded-full" />
+        <div className={styles.clockCenterDot} />
       </div>
     </div>
   );
 }
+
 
 
 const Timer: React.FC = () => {

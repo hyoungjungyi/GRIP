@@ -25,7 +25,7 @@
 
 .input:focus {
   outline: none;
-  border-color: #333;
+
 }
 .button {
   padding: 12px 20px;
@@ -672,4 +672,83 @@
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+}
+.controlButton {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.controlButton:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+  color: #222;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.controlButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* 버튼별 색상 클래스 */
+.sheetTypeButton {
+  border-color: rgba(70, 130, 180, 0.6); /* steelblue */
+  background: rgba(70, 130, 180, 0.2);
+  color: #4682b4;
+}
+
+.sheetTypeButton:hover:not(:disabled) {
+  background: rgba(70, 130, 180, 0.4);
+  color: white;
+  box-shadow: 0 0 8px 3px rgba(70, 130, 180, 0.7);
+}
+
+.favoriteButton {
+  border-color: rgba(255, 215, 0, 0.6); /* gold */
+  background: rgba(255, 215, 0, 0.2);
+  color: #daa520;
+}
+
+.favoriteButton:hover:not(:disabled) {
+  background: rgba(255, 215, 0, 0.4);
+  color: #fff700;
+  box-shadow: 0 0 8px 3px rgba(255, 215, 0, 0.8);
+}
+
+.resetButton {
+  border-color: rgba(144, 238, 144, 0.6); /* lightgreen */
+  background: rgba(144, 238, 144, 0.2);
+  color: #2e8b57;
+}
+
+.resetButton:hover:not(:disabled) {
+  background: rgba(144, 238, 144, 0.4);
+  color: #006400;
+  box-shadow: 0 0 8px 3px rgba(144, 238, 144, 0.8);
+}
+
+.deleteButton {
+  border-color: rgba(255, 69, 0, 0.6); /* orangered */
+  background: rgba(255, 69, 0, 0.2);
+  color: #ff4500;
+}
+
+.deleteButton:hover:not(:disabled) {
+  background: rgba(255, 69, 0, 0.4);
+  color: #ff0000;
+  box-shadow: 0 0 8px 3px rgba(255, 69, 0, 0.8);
 }
