@@ -7,6 +7,9 @@
 > An AI-powered web app to enhance your daily guitar practice routine.  
 > 🌐 [Visit the Website](https://gripweb.vercel.app)
 
+BackEnd Repository
+https://github.com/hyoungjungyi/GRIP_back
+
 ---
 
 ## 🧭 Overview
