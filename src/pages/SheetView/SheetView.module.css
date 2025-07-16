@@ -20,8 +20,7 @@
   flex: 1;
   padding: 12px;
   font-size: 14px;
-  border-radius: 0;
-  border: 2px solid #000;
+  border-radius: 12px;
 }
 
 .input:focus {
@@ -432,68 +431,134 @@
   padding: 1px;
 }
 /* 업로드 팝업 스타일 */
-.popupOverlay {
+.goalPopupOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 100;
 }
-
-.popupBox {
+.goalPopupBox {
   background: #fff;
-  border-radius: 0;
-  border: 2px solid #000;
-  padding: 30px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-.popupHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #000;
-  padding-bottom: 15px;
-}
-
-.popupHeader h3 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #000;
-}
-
-.popupClose {
-  background: #000;
-  color: #fff;
-  border: none;
-  border-radius: 0;
-  width: 30px;
-  height: 30px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.popupClose:hover {
-  background: #333;
-}
-
-.popupContent {
+  border-radius: 16px;
+  box-shadow: 0 4px 24px #222;
+  padding: 32px 40px;
+  min-width: 320px;
+  max-width: 90vw;
+  min-height: 180px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  color: #111;
+}
+.goalPopupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+.goalPopupClose {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #333;
+}
+.goalPopupContent {
+  font-size: 1rem;
+}
+.goalPopupTimeRow {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  justify-content: center;
+  align-items: center;
+}
+.goalPopupTimeInput {
+  width: 100%; /* 👈 인풋이 부모 너비만큼 늘어나게 함 */
+  max-width: 100%; /* 👈 혹시라도 좁아지지 않게 */
+  box-sizing: border-box; /* 👈 padding, border 포함한 계산 */
+  font-size: 1rem;
+  color: #5f5f5f;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px 12px;
+  background: #fafafa;
+}
+
+.goalPopupTimeInput::placeholder {
+  color: #111;
+}
+.goalPopupTimeLabel {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.goalPopupBtn {
+  padding: 8px 22px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.goalPopupBtn:hover {
+  background: #333;
+}
+.goalPopupTimeSection {
+  margin-bottom: 16px;
+}
+.goalPopupRecordingSection {
+  margin-bottom: 16px;
+}
+.goalPopupRecordingLabel {
+  font-weight: 600;
+}
+.goalPopupChromaticSection {
+  margin-bottom: 16px;
+}
+.goalPopupChromaticLabel {
+  font-weight: 600;
+}
+/* Goal popup button styles */
+.goalPopupBtnRow {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.goalPopupSaveBtn {
+  flex: 1;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  background-color: #333;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.goalPopupCancelBtn {
+  flex: 1;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ddd;
+  cursor: pointer;
 }
 
 .inputGroup {
@@ -580,4 +645,31 @@
   color: #999;
   border-color: #ccc;
   cursor: not-allowed;
+}
+
+/* 예: UploadSheet.module.css */
+.buttonGlassBlack {
+  background: rgba(0, 0, 0, 0.4); /* 반투명 블랙 */
+  color: #fff; /* 텍스트는 흰색 */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 16px; /* 둥근 모서리 */
+  padding: 12px 24px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.buttonGlassBlack:hover {
+  background: rgba(0, 0, 0, 0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+.buttonGlassBlack:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }

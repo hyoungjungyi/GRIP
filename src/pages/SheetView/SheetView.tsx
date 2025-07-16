@@ -250,12 +250,8 @@ const SheetView: React.FC = () => {
             </button>
             <button 
               onClick={handleUploadClick} 
-              className={styles.button}
+              className={styles.buttonGlassBlack}
               disabled={isGenerating}
-              style={{
-                opacity: isGenerating ? 0.7 : 1,
-                cursor: isGenerating ? 'not-allowed' : 'pointer',
-              }}
             >
               UPLOAD SHEET
             </button>
@@ -487,12 +483,12 @@ const SheetView: React.FC = () => {
 
       {/* 업로드 팝업 */}
       {showUploadPopup && (
-        <div className={styles.popupOverlay}>
-          <div className={styles.popupBox}>
-            <div className={styles.popupHeader}>
-              <h3>악보 업로드</h3>
+        <div className={styles.goalPopupOverlay}>
+          <div className={styles.goalPopupBox}>
+            <div className={styles.goalPopupHeader}>
+              <span>Upload Sheet</span>
               <button
-                className={styles.popupClose}
+                className={styles.goalPopupClose}
                 onClick={handleUploadClose}
                 disabled={isUploading}
               >
@@ -500,34 +496,36 @@ const SheetView: React.FC = () => {
               </button>
             </div>
 
-            <div className={styles.popupContent}>
+            <div className={styles.goalPopupContent}>
               {/* 제목 입력 */}
-              <div className={styles.inputGroup}>
-                <label>곡 제목 *</label>
+              <div className={styles.goalPopupTimeSection}>
+                <label className={styles.goalPopupTimeLabel}>곡 제목 *</label>
                 <input
                   type="text"
                   value={uploadData.title}
                   onChange={(e) => handleInputChange("title", e.target.value)}
                   placeholder="곡 제목을 입력하세요"
+                  className={styles.goalPopupTimeInput}
                   disabled={isUploading}
                 />
               </div>
 
               {/* 아티스트 입력 */}
-              <div className={styles.inputGroup}>
-                <label>아티스트 *</label>
+              <div className={styles.goalPopupTimeSection}>
+                <label className={styles.goalPopupTimeLabel}>아티스트 *</label>
                 <input
                   type="text"
                   value={uploadData.artist}
                   onChange={(e) => handleInputChange("artist", e.target.value)}
                   placeholder="아티스트를 입력하세요"
+                  className={styles.goalPopupTimeInput}
                   disabled={isUploading}
                 />
               </div>
 
               {/* 표지 업로드 */}
-              <div className={styles.inputGroup}>
-                <label>표지 이미지 *</label>
+              <div className={styles.goalPopupTimeSection}>
+                <label className={styles.goalPopupTimeLabel}>표지 이미지 *</label>
                 <input
                   type="file"
                   accept="image/*"
@@ -544,8 +542,8 @@ const SheetView: React.FC = () => {
               </div>
 
               {/* Note 악보 업로드 */}
-              <div className={styles.inputGroup}>
-                <label>Note 악보 *</label>
+              <div className={styles.goalPopupTimeSection}>
+                <label className={styles.goalPopupTimeLabel}>Note 악보 *</label>
                 <input
                   type="file"
                   accept="image/*"
@@ -562,8 +560,8 @@ const SheetView: React.FC = () => {
               </div>
 
               {/* Tab 악보 업로드 */}
-              <div className={styles.inputGroup}>
-                <label>Tab 악보 *</label>
+              <div className={styles.goalPopupTimeSection}>
+                <label className={styles.goalPopupTimeLabel}>Tab 악보 *</label>
                 <input
                   type="file"
                   accept="image/*"
@@ -579,17 +577,10 @@ const SheetView: React.FC = () => {
                 )}
               </div>
 
-              {/* 업로드 버튼 */}
-              <div className={styles.buttonGroup}>
+              {/* 버튼 */}
+              <div className={styles.goalPopupBtnRow}>
                 <button
-                  className={styles.cancelBtn}
-                  onClick={handleUploadClose}
-                  disabled={isUploading}
-                >
-                  취소
-                </button>
-                <button
-                  className={styles.uploadBtn}
+                  className={styles.goalPopupSaveBtn}
                   onClick={handleUploadSubmit}
                   disabled={
                     isUploading ||
@@ -602,11 +593,19 @@ const SheetView: React.FC = () => {
                 >
                   {isUploading ? "업로드 중..." : "업로드"}
                 </button>
+                <button
+                  className={styles.goalPopupCancelBtn}
+                  onClick={handleUploadClose}
+                  disabled={isUploading}
+                >
+                  취소
+                </button>
               </div>
             </div>
           </div>
         </div>
       )}
+
     </>
   );
 };
